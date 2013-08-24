@@ -1,0 +1,26 @@
+window.Settings =  {
+	"classes" : ["Block"],
+	"objects" : [
+				{
+					"id" : "1",
+					"class" : "Block", 
+					"settings" : {}, 
+					"options" : {}
+				}
+				{ 
+					"id" : "2", 
+					"class" : "Block", 
+					"settings" : {}, 
+					"options" : { 
+						"collection" :[ 
+							{ 
+								"id" : "3", 
+								"class" : "Block", 
+								"settings" : {}, 
+								"options" : {}
+							}
+						]
+					}
+				}
+		]
+}

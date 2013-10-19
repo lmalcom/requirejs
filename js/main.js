@@ -1,5 +1,5 @@
 require.config({
-	baseUrl:'./js/classes', 
+	baseUrl:'../js/classes', 
 	shim : {
 		underscore : 
 		{
@@ -31,11 +31,25 @@ require.config({
 			name: 'less', 
 			location: '../libs', 
 			main:'less'
-		}
+		},
+		{
+			name: 'hammer', 
+			location: '../libs', 
+			main: 'hammer'
+		}, 
+		{
+			name: 'jquery.hammer', 
+			location: '../libs', 
+			main: 'jquery.hammer'
+		}, 
 	]
 }); 
-require(['Controller'], function(controller){
-
+require(['Controller', 'DefaultRouter'], function(Controller, Router){
 	//start module 
+	window.controller = new Controller; 
 	controller.loadPage(Settings); 
+
+	//initialize router with pages 
+	controller.set({router: new Router({parent:this})}); 
+	Backbone.history.start({pushState: true, hashChange: false}); 
 }); 

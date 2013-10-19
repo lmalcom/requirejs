@@ -1,97 +1,71 @@
 var mongo = require("mongodb"), 
-MongoClient = mongo.MongoClient, 
-host = "127.0.0.1", 
-port = mongo.Connection.DEFAULT_PORT, 
-db;
-
-//console.log(mongo.Server); 
-//var server = new MongoServer; 
-var mongoclient = new MongoClient(new mongo.Server(host, port), {journal:true})
-openDB('css'); 
+uri = process.env.MONGOHQ_URI || 'mongodb://requiretest:testing@paulo.mongohq.com:10055/lmalcom', 
+db = null; 
+openDB(uri); 
 
 //open any DB 
-function openDB(dbName){
-	mongoclient.open(function(error, dbOb){
-		if(error){
-			console.log('error connecting to the database!'); 
-		}else{
-			db = (typeof dbName === 'string') ? mongoclient.db(dbName) : 'default'; 
-		}
+function openDB(uri){ 
+	mongo.connect(uri, {journal:true},function(err, database){ 
+		if(err)	console.log('Error connecting to the database! ', err); 
+		else{ 
+			db = database; 
+			console.log('Connected to the database!'); 
+		} 
 	}); 
 }
 
-function addUser(user){
-	db.collection('user', function(error,collection){
-		if(!user || !user.username || !user.password || !user.email){
-			return 'Error, there are no users'
-		}
-		collection.insert({
-			username  : user.username,
-			password :user.password,
-			email : user.email
-		}, function(){
-			console.log('you have entered '+ user.username +' into the database! Their email is: ' + user.email);
-		});
+function findPage(){
+	db.collection('pages', function(error, collection){
+		collection.find(); 
+	}); 
+	return this; 
+}
+
+function addPage(page, callback){
+	db.collection('pages', function(error,collection){
+		if(!page || !page.name || !page.page) return 'Page not sent!'; 
+
+		//if there is no _id then check if the name is already taken...
+		//if the name is taken do not allow the save
+		//else save the page 
+		(!page._id)?
+			collection.find({name: page.name}).toArray(function(err, pages){				 
+				(err) 				? console.log('Error: ', err): 
+				(pages.length !== 0)	? console.log("that's already in the db!!!"): 
+				collection.save(page, function(err, newPage){
+					if(err) console.log('error!:', err); 
+					else{
+						console.log('you have inserted '+ page.name +' into the database!'); 
+						callback(newPage); 
+					};
+				});
+			}): 		
+
+			//otherwise it's already in the DB and we need to update it
+			collection.save(page, function(err, newPage){
+				if(err) console.log('error!:', err); 
+				else{
+					console.log('you have inserted '+ page.name +' into the database!'); 
+					callback(newPage); 
+				};
+			});		
 	});
 }
+function getPage(name, callback){
+	if(typeof name !== 'string') return new Error('Name is not of proper type'); 
+	db.collection('pages', function(error, collection){
+		(error)? console.log('this is the collections error: ' + error):	
 
-function findUser(user, callback){
-	db.collection('user', function(error, collection){
-		if(error){
-			console.log('this is the collections error: ' + error); 
-		}else{
-			collection.find({'username' : user.toString()}, function(error, index){
-				if(error){
-					console.log('this is the find error: ' + error); 
-				}else{
-					//if no user return false
-					index.toArray(function(error, users){
-						if (users.length == 0){
-							console.log('user not found'); 
-							callback(false); 
-						}else{
-							//return user object 
-							callback(users[0]);    
-						}
-					});  
-				}
-			}); 
-		}
+		//find the page and send it back	
+		collection.find({name : name}, function(error, index){
+			(error)? console.log('this is the find error: ' + error):				
+			index.toArray(function(error, pages){
+				(pages.length === 0) ? callback('What are you looking 404? Page not Found :/ '): callback(pages[0]); 						
+			})			
+		}); 		
 	}); 
+	return this; 
 }
 
-function verifyUser(username, password, callback){
-	//first find user
-	var status = findUser(username, function(user){
-		if(user){
-			//check password
-			callback(user.password == password); 
-		}else{
-			callback(false); 
-		}
-	}); 
-	return status; 
-}
-
-function addModel(id, model){
-	console.log('received model data'); 
-	console.log(id, model); 
-	console.log(db); 
-	db.collection('block', function(error,collection){
-		if(error){
-			return 'Error: ' + error
-		}
-		collection.insert({
-			Model : id,
-			Settings : model
-		}, function(){
-			console.log('you have entered id: '+ id +' into the database!');
-		});
-	});
-}
-
-module.exports.addUser = addUser; 
-module.exports.findUser = findUser; 
-module.exports.verifyUser = verifyUser; 
-module.exports.addModel = addModel; 
- 
+module.exports.addPage = addPage; 
+module.exports.getPage = getPage;

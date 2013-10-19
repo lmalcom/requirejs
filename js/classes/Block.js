@@ -1,4 +1,4 @@
-define(['require', 'CSS', 'Block'], function(require, CSS){
+define(['CSS'], function(CSS){
 	//Dependencies and base className */ 
 	var Block; 
 	Block =  {}
@@ -17,6 +17,7 @@ define(['require', 'CSS', 'Block'], function(require, CSS){
 			autohide: false,  
 			immutableCSS: false, 
 			defaultCSS 	: {
+				'display':'inline-block',
 				'width':'100%', 
 				'height':'100%',
 				'transition':'all .5s', 
@@ -26,44 +27,64 @@ define(['require', 'CSS', 'Block'], function(require, CSS){
 
 		//View Methods
 			initialize: function( attributes ){
-				//important events
 				var view = this; 
+				
 				//model events
-				this.model.on('change', this.render, this); 
-				this.model.on('destroy', this.remove, this); 
+				this.listenTo(this.model, 'change', this.render); 
+				this.listenTo(this.model, 'destroy', this.remove); 
 
 				//general events
 				this.on('hide', this.hide, this); 
 				this.on('show', this.show, this); 
+				this.$el.on('click', function(e){
+					view.trigger('click', e, view); 
+				}); 
 
 				//initialize css from defaults and attributes, also set parent attribute
-				this.css =  new CSS(_.extend(
-									{parent:view}, 
-									this.defaultCSS, 
-									((!this.immutableCSS)? attributes.model.css || {} : {})
-							)); 
-
+				if(attributes){
+					this.x = attributes.x || 0; 
+					this.y = attributes.y || 0; 
+					this.z = attributes.z || 0; 
+					this.parent = attributes.parent || null; 
+				}
+				this.css =  new CSS(((!this.immutableCSS)? (attributes.css || {}) : {}), {parent:view}); 
 			},
-			klass: function(){
-				return this;
-			}, 
-
 			hide: function(){
-				this.get('$el').fadeOut(); 
-				if(player = this.get('player')){
+				var view, deferred; 
+				view = this; 
+
+				if(view.$el.css('opacity') != 0){
+					view.$el.css({'opacity':'0'})
+
+					//on transition end set display to none
+					.one('transitionEnd webkitTransitionEnd mozTransitionEnd', function(ev){
+						if(ev.originalEvent.propertyName === 'opacity'){
+							view.$el.css({
+								'display':'none', 
+							}); 
+						}					
+					}); 
+				}else{
+					view.$el.css({'display':'none'}); 
+				}				
+
+				//if the element has a youtube player stop it
+				if(player = this.player){
 					player.stopVideo(); 
 				} 
+				return this; 
 			}, 
-
 			show: function(){  
-				this.get('$el')
-					.css({'display': 'inline-block'})
-					.delay(100)
-					.css({
-					'opacity':1, 
-					'-webkit-opacity':1,
-					'-moz-opacity':1,
-					})
+				var view, display; 
+				view = this, 
+				display = this.defaultCSS.display !== 'none'? this.defaultCSS.display : 'inline-block'; 
+				this.$el.css({
+					'display': display, 
+				})
+				//on transition end set display to none
+				.css({
+					'opacity':'1', 
+				}); 
 			}, 
 
 		//RENDERING FUNCTIONS 
@@ -77,15 +98,30 @@ define(['require', 'CSS', 'Block'], function(require, CSS){
 				//remove all event listeners
 				this.off(); 
 
-				//remove references from model 
-				this.model.off('destroy', this.remove, this); 
-				this.model.off('change', this.render, this);
-
-				//delete references in jquery and DOM 
-				delete this.$el; 
-				delete this.el;  
-
 			},
-	});			
+			saveState: function(){
+				var state, arr; 
+				state = {}; 
+
+				//set model and view
+				state.viewProps = this.toJSON(); 
+				state.modelProps = this.model.toJSON(); 
+
+				return state; 
+			},
+			toJSON: function(){ 
+				return {
+						x: this.x, 
+					    y: this.y, 
+					    z: this.z,
+						autohide: this.autohide,  
+						immutableCSS: this.immutableCSS, 
+						//get active css but omit the class default CSS
+						css: this.css.get('active'), 
+						/*css: _.omit(this.css.get('active'), _.keys(this.defaultCSS)), */
+						className: this.className
+					}
+			}
+	});	
 	return Block; 
 }); 

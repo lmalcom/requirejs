@@ -4,439 +4,142 @@ define(['jquery', 'underscore', 'backbone'], function($, _, Backbone){
 
 		CSS = Backbone.Model.extend({ 
 					defaults: {
-						'alignment-baseline': "",
-						'background': "",
-						'background-attachment': "",
-						'background-clip': "",
-						'background-color': "",
-						'background-image': "",
-						'background-origin': "",
-						'background-position': "",
-						'background-repeat': "",
-						'background-size': "",
-						'baseline-shift': "",
-						'border': "",
-						'border-bottom': "",
-						'border-bottom-color': "",
-						'border-bottom-left-radius': "",
-						'border-bottom-right-radius': "",
-						'border-bottom-style': "",
-						'border-bottom-width': "",
-						'border-collapse': "",
-						'border-color': "",
-						'border-image': "",
-						'border-image-outset': "",
-						'border-image-repeat': "",
-						'border-image-slice': "",
-						'border-image-source': "",
-						'borderImageWidth': "",
-						'border-left': "",
-						'border-left-color': "",
-						'border-left-style': "",
-						'border-left-width': "",
-						'border-radius': "",
-						'border-right': "",
-						'border-right-color': "",
-						'border-right-style': "",
-						'border-right-width': "",
-						'border-spacing': "",
-						'border-style': "",
-						'border-top': "",
-						'border-top-color': "",
-						'border-top-left-radius': "",
-						'border-top-right-radius': "",
-						'border-top-style': "",
-						'border-top-width': "",
-						'border-width': "",
-						'bottom': "",
-						'box-shadow': "",
-						'box-sizing': "",
-						'caption-side': "",
-						'clear': "",
-						'clip': "",
-						'clip-path': "",
-						'clip-rule': "",
-						'color': "",
-						'color-interpolation': "",
-						'color-interpolation-filters': "",
-						'color-profile': "",
-						'color-rendering': "",
-						'content': "",
-						'counter-increment': "",
-						'counter-reset': "",
-						'css-text': "",
-						'cursor': "",
-						'direction': "",
-						'display': "",
-						'dominant-baseline': "",
-						'empty-cells': "",
-						'enable-background': "",
-						'fill': "",
-						'fill-opacity': "",
-						'fill-rule': "",
-						'filter': "",
-						'float': "",
-						'flood-color': "",
-						'flood-opacity': "",
-						'font': "",
-						'font-family': "",
-						'font-size': "",
-						'font-stretch': "",
-						'font-style': "",
-						'font-variant': "",
-						'font-weight': "",
-						'glyph-orientation-horizontal': "",
-						'glyph-orientation-vertical': "",
-						'height': "",
-						'image-rendering': "",
-						'kerning': "",
-						'left': "",
-						'length': 0,
-						'letter-spacing': "",
-						'lighting-color': "",
-						'line-height': "",
-						'list-style': "",
-						'list-style-image': "",
-						'list-style-position': "",
-						'list-style-type': "",
-						'margin': "",
-						'margin-bottom': "",
-						'margin-left': "",
-						'margin-right': "",
-						'margin-top': "",
-						'marker': "",
-						'marker-end': "",
-						'marker-mid': "",
-						'marker-start': "",
-						'mask': "",
-						'max-height': "",
-						'max-width': "",
-						'min-height': "",
-						'min-width': "",
-						'opacity': "",
-						'orphans': "",
-						'outline': "",
-						'outline-color': "",
-						'outline-offset': "",
-						'outline-style': "",
-						'outline-width': "",
-						'overflow': "",
-						'overflow-wrap': "",
-						'overflow-x': "",
-						'overflow-y': "",
-						'padding': "",
-						'padding-bottom': "",
-						'padding-left': "",
-						'padding-right': "",
-						'padding-top': "",
-						'page': "",
-						'page-break-after': "",
-						'page-break-before': "",
-						'page-break-inside': "",
-						'parent-rule': null,
-						'pointer-events': "",
-						'position': "",
-						'quotes': "",
-						'resize': "",
-						'right': "",
-						'shape-rendering': "",
-						'size': "",
-						'speak': "",
-						'src': "",
-						'stop-color': "",
-						'stop-opacity': "",
-						'stroke': "",
-						'stroke-dasharray': "",
-						'stroke-dashoffset': "",
-						'stroke-linecap': "",
-						'stroke-linejoin': "",
-						'stroke-miterlimit': "",
-						'stroke-opacity': "",
-						'stroke-width': "",
-						'tab-size': "",
-						'table-layout': "",
-						'text-align': "",
-						'text-anchor': "",
-						'text-decoration': "",
-						'text-indent': "",
-						'text-line-through': "",
-						'text-line-through-color': "",
-						'textLineThroughMode': "",
-						'textLineThroughStyle': "",
-						'textLineThroughWidth': "",
-						'textOverflow': "",
-						'textOverline': "",
-						'textOverlineColor': "",
-						'textOverlineMode': "",
-						'text-overline-style': "",
-						'text-overline-width': "",
-						'text-rendering': "",
-						'text-shadow': "",
-						'text-transform': "",
-						'text-underline': "",
-						'text-underline-color': "",
-						'text-underline-mode': "",
-						'text-underline-style': "",
-						'text-underline-width': "",
-						'top': "",
-						'unicode-bidi': "",
-						'unicode-range': "",
-						'vector-effect': "",
-						'vertical-align': "",
-						'visibility': "",
-						'-webkit-align-content': "",
-						'-webkit-align-items': "",
-						'-webkit-align-self': "",
-						'-webkit-animation': "",
-						'-webkit-animation-delay': "",
-						'-webkit-animation-direction': "",
-						'-webkit-animation-duration': "",
-						'-webkit-animation-fillMode': "",
-						'-webkit-animation-iteration-count': "",
-						'-webkit-animation-name': "",
-						'-webkit-animation-play-state': "",
-						'-webkit-animation-timing-function': "",
-						'-webkit-appearance': "",
-						'-webkit-aspect-ratio': "",
-						'-webkit-backface-visibility': "",
-						'-webkit-background-clip': "",
-						'-webkit-background-composite': "",
-						'-webkit-background-origin': "",
-						'-webkit-background-size': "",
-						'-webkit-border-after': "",
-						'-webkit-border-after-color': "",
-						'-webkit-border-after-style': "",
-						'-webkit-border-after-width': "",
-						'-webkit-border-before': "",
-						'-webkit-border-before-color': "",
-						'-webkit-border-before-style': "",
-						'-webkit-border-before-width': "",
-						'-webkit-border-end': "",
-						'-webkit-border-end-color': "",
-						'-webkit-border-end-style': "",
-						'-webkit-border-end-width': "",
-						'-webkit-border-fit': "",
-						'-webkit-border-horizontal-spacing': "",
-						'-webkit-border-image': "",
-						'-webkit-border-radius': "",
-						'-webkit-border-start': "",
-						'-webkit-border-start-color': "",
-						'-webkit-border-start-style': "",
-						'-webkit-border-start-width': "",
-						'-webkit-border-vertical-spacing': "",
-						'-webkit-box-align': "",
-						'-webkit-box-decoration-break': "",
-						'-webkit-box-direction': "",
-						'-webkit-box-flex': "",
-						'-webkit-box-flex-group': "",
-						'-webkit-box-lines': "",
-						'-webkit-box-ordinal-group': "",
-						'-webkit-box-orient': "",
-						'-webkit-box-pack': "",
-						'-webkit-box-reflect': "",
-						'-webkit-box-shadow': "",
-						'-webkit-clip-path': "",
-						'-webkit-color-correction': "",
-						'-webkit-column-axis': "",
-						'-webkit-column-break-after': "",
-						'-webkit-column-break-before': "",
-						'-webkit-column-break-inside': "",
-						'-webkit-column-count': "",
-						'-webkit-column-gap': "",
-						'-webkit-column-progression': "",
-						'-webkit-column-rule': "",
-						'-webkit-column-rule-color': "",
-						'-webkit-column-rule-style': "",
-						'-webkit-column-rule-width': "",
-						'-webkit-column-span': "",
-						'-webkit-column-width': "",
-						'-webkit-columns': "",
-						'-webkit-filter': "",
-						'-webkit-flex': "",
-						'-webkit-flex-basis': "",
-						'-webkit-flex-direction': "",
-						'-webkit-flex-flow': "",
-						'-webkit-flex-grow': "",
-						'-webkit-flex-shrink': "",
-						'-webkit-flex-wrap': "",
-						'-webkit-flow-from': "",
-						'-webkit-flow-into': "",
-						'-webkit-font-feature-settings': "",
-						'-webkit-font-kerning': "",
-						'-webkit-font-size-delta': "",
-						'-webkit-font-smoothing': "",
-						'-webkit-font-variant-ligatures': "",
-						'-webkit-grid-column': "",
-						'-webkit-grid-columns': "",
-						'-webkit-grid-row': "",
-						'-webkit-grid-rows': "",
-						'-webkit-highlight': "",
-						'-webkit-hyphenate-character': "",
-						'-webkit-hyphenate-limit-after': "",
-						'-webkit-hyphenate-limit-before': "",
-						'-webkit-hyphenate-limit-lines': "",
-						'-webkit-hyphens': "",
-						'-webkit-justify-content': "",
-						'-webkit-line-align': "",
-						'-webkit-line-box-contain': "",
-						'-webkit-line-break': "",
-						'-webkit-line-clamp': "",
-						'-webkit-line-grid': "",
-						'-webkit-line-snap': "",
-						'-webkit-locale': "",
-						'-webkit-logical-height': "",
-						'-webkit-logical-width': "",
-						'-webkit-margin-after': "",
-						'-webkit-margin-after-collapse': "",
-						'-webkit-margin-before': "",
-						'-webkit-margin-before-collapse': "",
-						'-webkit-margin-bottom-collapse': "",
-						'-webkit-margin-collapse': "",
-						'-webkit-margin-end': "",
-						'-webkit-margin-start': "",
-						'-webkit-margin-top-collapse': "",
-						'-webkit-marquee': "",
-						'-webkit-marquee-direction': "",
-						'-webkit-marquee-increment': "",
-						'-webkit-marquee-repetition': "",
-						'-webkit-marquee-speed': "",
-						'-webkit-marquee-style': "",
-						'-webkit-mask': "",
-						'-webkit-mask-attachment': "",
-						'-webkit-mask-box-image': "",
-						'-webkit-mask-box-image-outset': "",
-						'-webkit-mask-box-image-repeat': "",
-						'-webkit-mask-box-image-slice': "",
-						'-webkit-mask-box-image-source': "",
-						'-webkit-mask-box-image-width': "",
-						'-webkit-mask-clip': "",
-						'-webkit-mask-composite': "",
-						'-webkit-mask-image': "",
-						'-webkit-mask-origin': "",
-						'-webkit-mask-position': "",
-						'-webkit-mask-repeat': "",
-						'-webkit-mask-size': "",
-						'-webkit-max-logical-height': "",
-						'-webkit-max-logical-width': "",
-						'-webkit-min-logical-height': "",
-						'-webkit-min-logical-width': "",
-						'-webkit-nbsp-mode': "",
-						'-webkit-order': "",
-						'-webkit-padding-after': "",
-						'-webkit-padding-before': "",
-						'-webkit-padding-end': "",
-						'-webkit-padding-start': "",
-						'-webkit-perspective': "",
-						'-webkit-perspective-origin': "",
-						'-webkit-print-color-adjust': "",
-						'-webkit-region-break-after': "",
-						'-webkit-region-break-before': "",
-						'-webkit-region-break-inside': "",
-						'-webkit-region-overflow': "",
-						'-webkit-rtl-ordering': "",
-						'-webkit-shape-inside': "",
-						'-webkit-shape-otside': "",
-						'-webkit-svg-shadow': "",
-						'-webkit-tap-highlight-color': "",
-						'-webkit-text-combine': "",
-						'-webkit-text-decorations-in-effect': "",
-						'-webkit-text-emphasis': "",
-						'-webkit-text-emphasis-color': "",
-						'-webkit-text-emphasis-position': "",
-						'-webkit-text-emphasis-style': "",
-						'-webkit-text-fill-color': "",
-						'-webkit-text-orientation': "",
-						'-webkit-text-security': "",
-						'-webkit-text-size-adjust': "",
-						'-webkit-text-stroke': "",
-						'-webkit-text-stroke-color': "",
-						'-webkit-text-stroke-width': "",
-						'-webkit-transform': "",
-						'-webkit-transform-origin': "",
-						'-webkit-transform-style': "",
-						'-webkit-transition': "",
-						'-webkit-transition-delay': "",
-						'-webkit-transition-duration': "",
-						'-webkit-transition-property': "",
-						'-webkit-transition-timing-function': "",
-						'-webkit-user-drag': "",
-						'-webkit-user-modify': "",
-						'-webkit-user-select': "",
-						'-webkit-widget-region': "",
-						'-webkit-wrap': "",
-						'-webkit-wrap-flow': "",
-						'-webkit-wrap-margin': "",
-						'-webkit-wrap-padding': "",
-						'-webkit-wrap-through': "",
-						'-webkit-writing-mode': "",
-						'white-space': "",
-						'widows': "",
-						'width': "",
-						'word-break': "",
-						'word-spacing': "",
-						'word-wrap': "",
-						'writing-mode': "",
-						'z-index': "",
-						'zoom': "",
+						'defaultInlineProperties': ['transform', '-webkit-transform', '-moz-transform'], 
 					}, 
-					initialize: function (attributes){
-						//set active css properties
-						var active = _.omit(attributes, 'parent'); 
+					initialize: function (attributes, options){ 
+						var active; 
+						
+						//set initial properties 
+						active = _.extend({}, attributes); 
 						this.set({active:active}); 
+						this.parent = options.parent; 
 
 						//update the active property list on change 
 						this.on('change', this.updateCSS, this); 
+
+						//transform changes
+						this.parent.on('change', function(){
+							alert('oh hey the x changed!'); 
+							this.inline({
+								'transform': 'translateX(' + this.parent.x + 'px)', 
+								'-webkit-transform': 'translateX(' + this.parent.x + 'px)', 
+								'-moz-transform': 'translateX(' + this.parent.x + 'px)'
+							}); 
+						}, this); 
 					},
-					inline: function(css){
-						this.get('parent').get('elView').$el(css); 
+					transform: function (){
+						var ret, parent, x, y, z, rotX, rotY, rotZ, scaleX, scaleY, scaleZ, skewX, skewY; 
+						ret = '',
+						parent = this.parent, 
+						x = parent.x, 
+						y = parent.y, 
+						z = parent.z, 
+						rotX = parent.rotX, 
+						rotY = parent.rotY, 
+						rotZ = parent.rotZ, 
+						scaleX = parent.scaleX, 
+						scaleY = parent.scaleY, 
+						scaleZ = parent.scaleZ, 
+						skewX = parent.skewX, 
+						skewY = parent.skewY; 
+
+						//transform properties
+						ret += 'translate3d(' + x + 'px, ' + y + 'px, ' + z + 'px ) '; 
+
+						//rotate properties 
+						if(rotX) ret += 'rotateX(' + rotX + 'deg) '; 
+						if(rotY) ret += 'rotateY(' + rotY + 'deg) '; 
+						if(rotZ) ret += 'rotateZ(' + rotZ + 'deg) '; 
+
+						//scale properties
+						if(scaleX || scaleY) ret += 'scale3d(' + (scaleX || 0) + ', ' + (scaleY || 0) + ') '; 
+
+						//skew properties
+						if(skewX || skewY) ret += 'skew(' + (skewX || 0) + ', ' + (skewY || 0) + ') '; 
+
+						//return object with domstring for each type of browser
+						return {
+							'transform': ret, 
+							'-webkit-transform': ret, 
+							'-moz-transform': ret
+						}
+
 					},
 					updateCSS: function(){
 						this.set({active: _.extend({}, this.get('active'), this.changed)}, {silent:true});
-						//this.removeInlineStyles(); 
-						if(window.controller) controller.get('elView').renderCSS(); 
+						console.log(this.parent); 
 					},
+					//puts inline styles for things that need to be put inline
+					inline: function(props){
+						var css, inline; 
+
+						//get all properties from the css object that were asked for and the defaults
+						inline = _.pick(this.get('active'), props); 
+						css = _.extend({}, inline, this.transform());  
+
+						this.parent.$el.css(css); 
+					},
+					//removes all inline styles except for those listed in the arguments
 					removeInlineStyles: function(){
-						if(this.has('parent') && this.get('parent').$el){
-							var parent = this.get('parent'), 				
+						if(this.parent && this.parent.$el){
+							var parent = this.parent, 				
 							args = Array.prototype.slice.call(arguments);
+							args.concat(this.get('defaultInlineProperties')); 
 
 							//get current values of the exceptions from arguments			
 							var css = (args.length < 1) ? '' : parent.get('$el').css(args); 
 
 							//clear style
-							parent.get('$el').attr('style', '');
+							parent.$el.attr('style', '');
 							
 							//reset inline styles from exceptions
-							parent.get('$el').css(css); 
+							parent.$el.css(css); 
 						}		
 					},
-					render : function(){ 
+					renderDefaultCSS: function(){
 						//copy the version for blocks
-						var CSS, CSSstring; 
-						CSS = this; 
-						CSSstring = '#' + this.get('parent').id() + ' { '; 
-
+						var css, CSSstring; 
+						css = this; 
+						CSSstring = ''; 
+						
+						if( controller.has('classes') ){
+							//print each of the prototype defaultCSS 
+							_.each(controller.get('classes'), function(key, value, list){
+								CSSstring += css.renderDOMString(key.prototype.defaultCSS, '.' + value, list); 
+							}); 
+						} 							
+						return CSSstring;  
+					},
+					render : function(){ 
+						var css, CSSstring; 
+						css = this; 
+						CSSstring = '#' + this.parent.id() + ' { '; 
 						//check that there are active properties to add to the CSS string
-						if( this.get('active') !== null ){
+						if( css.get('active') !== null ){
 							//print each of the active qualities
-							_.each(this.get('active'), function(key, value, list){
-								CSSstring += CSS.renderDOMString(key, value, list); 
+							_.each(css.get('active'), function(key, value, list){
+								CSSstring += css.renderDOMString(key, value, list); 
 							}); 
 					
 						}; 
 
-						//let children define their css as well
-						if( this.get('parent').subviews && this.get('parent').subviews.length > 0){
-							_.each(this.get('parent').subviews, function(view){ 
+						//let children define their css as well 
+						if( css.parent.subviews && css.parent.subviews.length > 0){ 
+							_.each(css.parent.subviews, function(view){ 
 								CSSstring += view.css.render(); 
 							}); 
 						}; 
 
 						//end
 						CSSstring += ' } '; 
+
+						//add inline CSS if necessary 
+						this.inline(); 
+
 						return CSSstring;  
 					}, 
 					renderDOMString: function(value, key, list){
+						var css = this; 
 						//if the value is a string, print it
 						if(_.isString(value) || _.isNumber(value)){
 							var string = key + ' : ' + value + ' ; ';
@@ -447,15 +150,13 @@ define(['jquery', 'underscore', 'backbone'], function($, _, Backbone){
 						}else if(_.isObject(value)){
 							var string =  key + ' { '; 
 							_.each(value, function(rule, name, list){
-								string += this.renderDOMString(rule, name, list); 
+								string += css.renderDOMString(rule, name, list); 
 							})
 							string += ' } '; 
 
 							return string; 
 						}			
 					},
-
-
 		}); 
 
 		return CSS; 

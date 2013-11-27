@@ -1,14 +1,11 @@
 var fs 		= require("fs"); 
 var db = require("./db.js"); 
 var express = require("express"); 
-var config  = JSON.parse(fs.readFileSync("config.json")); 
-var host = config.host; 
-var port = config.port; 
 var app = express();
 
 //server for socket
 var server = require('http').createServer(app); 
-server.listen(process.env.VCAP_APP_PORT || 8801); 
+server.listen(process.env.PORT || 8801); 
 var io = require('socket.io').listen(server); 
 io.set('log level', 1);
 

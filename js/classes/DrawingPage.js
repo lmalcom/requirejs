@@ -14,7 +14,7 @@ define(['Page', 'io'], function(Page, io){
 			'mousedown': 'check', 
 			'mouseup'  : 'resolve', 
 		}), 
-		socket: io.connect('http://' + window.location.hostname + ':8800'),
+		socket: io.connect('http://' + window.location.hostname),
 		requestAnimationFrame: window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame,
 		animated: true, 
 		rate: 50, 

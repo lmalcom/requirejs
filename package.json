@@ -2,7 +2,7 @@
 	"name": "muffins",
 	"version": "0.0.1-1",
 	"engines": {
-		"node": "v0.10.22"
+		"node": "v0.10.x"
 	},
 	"email": "lerenzo@gmail.com",
 	"dependencies": {

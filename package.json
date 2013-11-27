@@ -1,0 +1,11 @@
+{
+	"scripts": {"start": "node server.js"}, 
+	"name": "my lovely app", 
+	"version": "v0.10.22", 
+	"email" : "lerenzo@gmail.com", 
+	"dependencies":{
+		"express":"", 
+		"socket.io":"", 
+		"twitter":""
+	}
+}

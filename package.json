@@ -8,5 +8,6 @@
 		"twitter":"*", 
 		"require":"", 
 		"mongodb":""
-	}
+	}, 
+	"scripts": { "start": "server.js" }
 }

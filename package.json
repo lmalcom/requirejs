@@ -1,7 +1,7 @@
 {
 	"name": "muffins", 
 	"version": "v0.10.22", 
-	"engines":{ "node": "v0.10.22" },
+	"engine": "node = v0.10.22",
 	"email" : "lerenzo@gmail.com", 
 	"dependencies":{
 		"express":"", 

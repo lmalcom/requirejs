@@ -1,6 +1,7 @@
 var mongo = require("mongodb"), 
-uri = process.env.MONGOHQ_URI || 'mongodb://requiretest:testing@paulo.mongohq.com:10055/lmalcom', 
-db = null; 
+uri = 'mongodb://requiretest:testing@paulo.mongohq.com:10055/lmalcom', 
+db = null, 
+ObjectID = require('mongodb').ObjectID; 
 openDB(uri); 
 
 //open any DB 
@@ -28,27 +29,41 @@ function addPage(page, callback){
 		//if there is no _id then check if the name is already taken...
 		//if the name is taken do not allow the save
 		//else save the page 
-		(!page._id)?
-			collection.find({name: page.name}).toArray(function(err, pages){				 
-				(err) 				? console.log('Error: ', err): 
+		if(!page._id){ 
+			collection.find({name: page.name}).toArray(function(err, pages){ 
+				(err) 					? console.log('Error: ', err): 
 				(pages.length !== 0)	? console.log("that's already in the db!!!"): 
-				collection.save(page, function(err, newPage){
+				collection.save(page, function(err, newPage){ 
 					if(err) console.log('error!:', err); 
-					else{
+					else{ 
 						console.log('you have inserted '+ page.name +' into the database!'); 
 						callback(newPage); 
-					};
-				});
-			}): 		
-
-			//otherwise it's already in the DB and we need to update it
-			collection.save(page, function(err, newPage){
+					}; 
+				}); 
+			}); 
+		}else{ 
+			//otherwise it's already in the DB and we need to update it 
+			page._id = new ObjectID(page._id); 			
+			collection.save(page, function(err, newpage){
+				if(err) console.log('error', err); 
+				console.log('new page?', newpage); 
+			});
+			callback('looks like this worked?'); 
+			/*collection.find({_id: new ObjectID(page._id)}, function(err, arr){ 
 				if(err) console.log('error!:', err); 
-				else{
-					console.log('you have inserted '+ page.name +' into the database!'); 
-					callback(newPage); 
-				};
-			});		
+				arr.toArray(function(err, pages){
+					console.log('arrrrrr',pages); 
+					if(pages.length == 0) console.log('page with id: _id not found');
+					else{
+						page._id = pages[0]._id; 
+						pages[0] = page; 
+						console.log('you have modified '+ pages[0].name +'!'); 
+						callback(pages[0]); 
+					};
+				}); 
+				
+			});	*/
+		}					
 	});
 }
 function getPage(name, callback){

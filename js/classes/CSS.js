@@ -8,10 +8,10 @@ define(['jquery', 'underscore', 'backbone'], function($, _, Backbone){
 					}, 
 					initialize: function (attributes, options){ 
 						var active; 
-						
 						//set initial properties 
 						active = _.extend({}, attributes); 
 						this.set({active:active}); 
+						console.log(this)
 						this.parent = options.parent; 
 
 						//update the active property list on change 
@@ -67,7 +67,7 @@ define(['jquery', 'underscore', 'backbone'], function($, _, Backbone){
 					},
 					updateCSS: function(){
 						this.set({active: _.extend({}, this.get('active'), this.changed)}, {silent:true});
-						console.log(this.parent); 
+						return this; 
 					},
 					//puts inline styles for things that need to be put inline
 					inline: function(props){
@@ -135,7 +135,6 @@ define(['jquery', 'underscore', 'backbone'], function($, _, Backbone){
 
 						//add inline CSS if necessary 
 						this.inline(); 
-
 						return CSSstring;  
 					}, 
 					renderDOMString: function(value, key, list){

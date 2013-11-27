@@ -1,24 +1,37 @@
-define(['require', 'CSS','Block', 'Panel', 'Page', 'Form', 'ColorForm', 'PublishForm','Button'], function(require, CSS, Block, Panel, Page, Form, ColorForm, PublishForm,Button){ 
+define(['require', 'CSS','Block', 'Panel', 'Page', 'Form', 'ColorForm', 'BorderForm', 'PublishForm','Button'], function(require, CSS, Block, Panel, Page, Form, ColorForm, BorderForm, PublishForm,Button){ 
 	'use strict'; 
 	var Edit = Page.extend({ 
 		//default settings for adding objects 
 		className: 'Edit', 
 		events: { 
 			'click':'hide', 
-			'click .Button':'save' 
+			'click .Button':'save', 
+			'click #delete': 'deleteBlock', 
 		}, 
 		defaultCSS: _.extend({}, Page.prototype.defaultCSS, { 
 			'@bgcolor': 'rgba(0,0,0, .5)', 
 			'background':'@bgcolor', 
 			'z-index': '2', 
 			'display':'none', 
+			'*':{
+				'transition':'all .25s', 
+				'-webkit-transition':'all .25s', 
+				'-moz-transition':'all .25s', 
+				'box-sizing': 'border-box',
+				'-moz-box-sizing': 'border-box',
+				'-webkit-box-sizing': 'border-box',
+			},
 			'& > .Panel':{ 
 				'width':'25%', 
 				'height':'100%', 
+				'overflow-y':'auto',
 				'background-color':'darken(@bgcolor, 30%)' 
 			}, 
 			'.Form:hover':{
 				'background-color':'lighten(@bgcolor, 30%)', 
+			},
+			'.PublishForm:hover':{
+				'background':'rgba(69, 180, 196, 0.49)',
 			},
 			//the container panel for the buttons
 			'.Panel .Panel': {
@@ -31,6 +44,37 @@ define(['require', 'CSS','Block', 'Panel', 'Page', 'Form', 'ColorForm', 'Publish
 				'position':'relative', 
 				'width':'33%', 
 				'display':'inline-block'
+			}, 
+			'#delete':{
+				'position':'absolute', 
+				'background-color':'rgba(150,50,50,.8)', 
+				'border-radius':'100%', 
+				'text-align':'center', 
+				'-moz-box-shadow': '0px 1px 10px 0px rgba(0,0,0, .3)', 
+				'-webkit-box-shadow': '0px 1px 10px 0px rgba(0,0,0, .3)', 
+				'box-shadow': '0px 1px 10px 0px rgba(0,0,0, .3)', 
+			}, 
+			'#delete:hover':{
+				'background-color':'rgba(170,20,20,1)'
+			}, 
+			'#delete:active':{
+				'background-color':'rgba(170,20,20,1)', 
+				'height':'40px', 
+				'-webkit-transform':'translateY(1px)', 
+				'-moz-transform':'translateY(1px)', 
+				'transform':'translateY(1px)'
+			}, 
+			'#editBox':{
+				'position':'absolute', 
+				'-moz-box-shadow': '0px 0px 20px 4px #77979A',
+				'-webkit-box-shadow': '0px 0px 20px 4px #77979A',
+				'box-shadow': '0px 0px 20px 4px #77979A',
+				'cursor':'pointer'
+			}, 
+			'#editBox:hover':{
+				'-moz-box-shadow': '0px 0px 48px 4px rgb(119, 151, 154)',
+				'-webkit-box-shadow': '0px 0px 48px 4px rgb(119, 151, 154)',
+				'box-shadow': '0px 0px 48px 4px rgb(119, 151, 154)',
 			}, 
 		}), 
 		brushSettings: { 
@@ -64,19 +108,14 @@ define(['require', 'CSS','Block', 'Panel', 'Page', 'Form', 'ColorForm', 'Publish
 					new Backbone.Model({defaultView: 'Panel'}, {
 							subcollection: new Backbone.Collection([
 								new Backbone.Model({defaultView: 'ColorForm', edit: edit}),
-								new Backbone.Model({defaultView: 'PublishForm', edit: edit}),  
-								new Backbone.Model({defaultView: 'Panel'}, {
-									subcollection: new Backbone.Collection([
-										new Backbone.Model({text:'Save', defaultView: 'Button', message:'save'}), 
-										new Backbone.Model({text:'Load', defaultView: 'Button', message:'load'}), 
-										new Backbone.Model({text:'Publish', defaultView: 'Button', message:'publish'}) 
-									])
-								})
-								
+								new Backbone.Model({defaultView: 'ColorForm', header: 'Color:hover', pseudoClass: 'hover', edit: edit}),
+								new Backbone.Model({defaultView: 'BorderForm', edit: edit}),
+								new Backbone.Model({defaultView: 'BrushForm', edit: edit}), 		
+								new Backbone.Model({defaultView: 'PublishForm', edit: edit}), 
 							]), 						
-					})
+					}), 
 				]); 
-			}			
+			} 
 
 			//set listeners for the page and subviews 
 			if(this.model.has('page')){ 
@@ -87,19 +126,20 @@ define(['require', 'CSS','Block', 'Panel', 'Page', 'Form', 'ColorForm', 'Publish
 					event.preventDefault(); 
 					Panel.prototype.show.call(edit); 
 				}); 
+
 				page.view.$el.on('click', function(){ 
 					Panel.prototype.hide.call(edit); 
-				});
+				}); 
+
 				edit.listenTo(page.view, 'click', edit.addBlock); 
 				_.each(page.view.subviews, function( view ){ 
-					edit.listenTo(view, 'click', edit.edit); 
-				});
-			}
+					edit.listenTo(view, 'mouseover', edit.edit); 
+				}); 
+			} 
 
-			//event handlers
+			//event handlers 
 			//this.listenTo(this.model.subcollection, 'save', this.save); 
-
-		},
+		}, 
 		//create block centered on that spot 
 		addBlock : function( event, stateJSON ){ 
 			if(event.target == this.model.get('page').get('page').view.el){
@@ -124,7 +164,7 @@ define(['require', 'CSS','Block', 'Panel', 'Page', 'Form', 'ColorForm', 'Publish
 				state.view.y = event.pageY - height/2; 
 
 				//listen to object 
-				this.listenTo(state.view, 'click', this.edit); 
+				this.listenTo(state.view, 'mouseover', this.edit); 
 				this.edit(event, state.view); 
 
 				//render html and css 
@@ -135,10 +175,38 @@ define(['require', 'CSS','Block', 'Panel', 'Page', 'Form', 'ColorForm', 'Publish
 			//return this; 
 			return this; 
 		}, 
+		deleteBlock: function(ev){
+			var pageModel = this.model.get('page').get('page').model,
+				pageView = this.model.get('page').get('page').view;
+
+			//create visual feedback 
+			$(ev.target).css('opacity', 0); 
+			this.target.$el.fadeOut(); 
+
+			//remove from view and model collections 
+			pageModel.subcollection.remove(this.target.model); 
+			pageView.removeFromCollection(this.target); 
+
+			return this; 
+
+		},
 		edit: function(event, view){ 
-			this.target = view; 
+			var position = view.$el.offset(),
+				deleteBtn = this.$el.find('#delete'),
+				box = this.$el.find('#editBox'),
+				posy = position.top - 20, //20 is half of X button width and height
+				posx = position.left + view.$el.width() - 20;
+				this.target = view; 
+
+			//trigger change event 
 			this.trigger('change:target', event, view); 
-			//insert visual effect for feedback 
+
+			//insert X for deleting 
+			deleteBtn.css({top:posy, left:posx}); 
+
+			//shaded box for outline
+			box.css({top:position.top, left:position.left, width:view.$el.width(), height: view.$el.height()}); 
+
 			return this; 
 		}, 
 		//
@@ -155,6 +223,9 @@ define(['require', 'CSS','Block', 'Panel', 'Page', 'Form', 'ColorForm', 'Publish
 
 			//but append to modules 
 			$('#modules').append(this.el); 
+
+			//add modify box
+			this.$el.append('<div id="editBox"></div><a id="delete" class="Button">X</a>'); 
 
 			//render css
 			this.renderCSS(); 

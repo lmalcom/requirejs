@@ -27,7 +27,8 @@ define(['CSS'], function(CSS){
 
 		//View Methods
 			initialize: function( attributes ){
-				var view = this; 
+				var view, attrs, options; 
+				view = this; 
 				
 				//model events
 				this.listenTo(this.model, 'change', this.render); 
@@ -36,34 +37,51 @@ define(['CSS'], function(CSS){
 				//general events
 				this.on('hide', this.hide, this); 
 				this.on('show', this.show, this); 
+				this.$el.on('mouseover', function(e){
+					view.trigger('mouseover', e, view); 
+				}); 
 				this.$el.on('click', function(e){
 					view.trigger('click', e, view); 
 				}); 
 
-				//initialize css from defaults and attributes, also set parent attribute
-				if(attributes){
-					this.x = attributes.x || 0; 
-					this.y = attributes.y || 0; 
-					this.z = attributes.z || 0; 
-					this.parent = attributes.parent || null; 
+				//set properties onto the view
+				if(attributes){ 
+					var keys = _.omit(attributes, 'model', 'css'); 
+					_.each(keys, function(val, key, list){ 
+						view[key] = val; 
+					}) 
 				}
-				this.css =  new CSS(((!this.immutableCSS)? (attributes.css || {}) : {}), {parent:view}); 
+				attrs = (!attributes.immutableCSS && attributes.css)? attributes.css: {}; 
+				options = {parent:view}; 
+				//console.log(this);
+				//console.log('attrs in block', attrs); 
+				this.css =  new CSS(attributes.css, options);
+			},
+			inViewPort: function () {
+			    var rect = this.el.getBoundingClientRect();
+
+			    return (
+			        rect.top >= 0 &&
+			        rect.left >= 0 &&
+			        rect.bottom <= (window.innerHeight || document. documentElement.clientHeight) &&
+			        rect.right <= (window.innerWidth || document. documentElement.clientWidth)
+			        );
 			},
 			hide: function(){
 				var view, deferred; 
 				view = this; 
 
 				if(view.$el.css('opacity') != 0){
-					view.$el.css({'opacity':'0'})
 
 					//on transition end set display to none
-					.one('transitionEnd webkitTransitionEnd mozTransitionEnd', function(ev){
+					view.$el.one('transitionEnd webkitTransitionEnd mozTransitionEnd', function(ev){
 						if(ev.originalEvent.propertyName === 'opacity'){
 							view.$el.css({
 								'display':'none', 
 							}); 
 						}					
 					}); 
+					view.$el.css({'opacity':'0'}); 
 				}else{
 					view.$el.css({'display':'none'}); 
 				}				
@@ -92,24 +110,28 @@ define(['CSS'], function(CSS){
 				this.$el.html(this.template(this.model.toJSON())); 
 				return this; 
 			}, 
-			remove: function(){
+			/*remove: function(){
 				Backbone.View.prototype.remove.call(this);
 
-				//remove all event listeners
-				this.off(); 
-
-			},
+				//delete references in jquery and DOM 
+				delete this.$el; 
+				delete this.el;  
+			},*/
 			saveState: function(){
 				var state, arr; 
 				state = {}; 
 
-				//set model and view
+				//set model and view 
 				state.viewProps = this.toJSON(); 
 				state.modelProps = this.model.toJSON(); 
 
 				return state; 
-			},
+			}, 
 			toJSON: function(){ 
+				//return everything except functions... 
+				/*var ret = _.omit(this, _.functions(this).concat(['$el', '_events', 'cid', 'defaultCSS', 'el', 'model', 'styleSheet', 'subviews', 'tagName', '_listeningTo'])); 
+				ret = _.clone(ret); */
+				//return ret; 
 				return {
 						x: this.x, 
 					    y: this.y, 

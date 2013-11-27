@@ -37,26 +37,39 @@ define(['Block'], function(Block){
 		   			return newView; 
 	   			}, panel); 
 	   		}else{
-	   			//otherwise just have it render itself
+	   			//otherwise just have it render itself 
+	   			var page = null; 
+	   			if(!view.page){
+	   				page = 	(view.parent && !view.parent.parent)? view.parent: 
+	   						(panel.page)? panel.page: 
+	   						panel; 
+	   				console.log(page); 
+	   			}
+	   			 
+
+	   			view.page = page; 
 	   			panel.$el.append(view.render().el); 
 		   		return view; 
 	   		} 	
 	   			    
 	    }, 
-	    createView: function( model, options, callback, ctx ){
+	    createView: function( model, options, callback, ctx ){ 
 	    	var panel = this; 
 			//get class 
 			var klass = this.defaultSubview || model.get('defaultView') || 'Block'; 
 			controller.getClass(klass, function(classOb){ 
-				//returned object is either the object or 
-				var view, options; 
+
+				//returned object is either the object or an array with one object
+				var view, options, page; 
+				page = (this.parent && this.parent.page)? this.parent.page: this; 
 				view = classOb[0] || classOb; 
-				options = _.extend({},options, {model:model, parent:panel}); 
+				console.log('page',page); 
+				options = _.extend({},options, {model:model, parent:panel, page:page}); 
 
 				view = new view(options); 
 				panel.subviews.push(view); 
 
-				//callback
+				//callback 
 				if(callback && typeof callback === 'function') callback.call(ctx || null, view); 
 
 			}, this); 
@@ -70,6 +83,20 @@ define(['Block'], function(Block){
 			}); 
 			this.subviews = []; 
 	   	}, 
+	   	removeFromCollection: function(view){
+	   		var panel = this; 
+	   		_.each(this.subviews, function(subview, index){
+	   			if(subview === view){
+	   				//remove from panel view and model 
+	   				panel.subviews.splice(index, 1); 	
+
+	   				//remove view and model
+	   				view.model.destroy(), 
+	   				view.remove(); 	   			
+	   			}
+	   		})
+	   		return this; 
+	   	},
 		saveState: function(){ 
 			var state, arr; 
 			state = {}, 

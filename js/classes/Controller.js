@@ -30,7 +30,7 @@ define(['jquery', 'underscore', 'backbone', 'less','Block', 'Panel','Page', 'Def
 		},	
 		createModel: function( child ){ 
 				var controller, klass, options, model; 
-				controller = this;
+				controller = this; 
 
 				//load class 
 				klass = controller.get('classes')[(child.className)] || Backbone.Model; 
@@ -38,23 +38,22 @@ define(['jquery', 'underscore', 'backbone', 'less','Block', 'Panel','Page', 'Def
 				//create collections first 
 				if( child.options && child.options.subcollection){ 
 					child.options.subcollection = controller.createModelCollection(child.options.subcollection); 
-				}
+				} 
 
 				//create object and set settings/options 
 				model = new klass(child.settings || {}, child.options || {}); 
 				return model; 
 		}, 
-		createModelCollection: function( collection ){
+		createModelCollection: function( collection ){ 
 				//create collection from children 
 				var arr, coll, controller; 
 				controller = this; 
 				arr = []; 
 
-				//create all of the models
-				_.each(collection, function (child){
+				//create all of the models 
+				_.each(collection, function (child){ 
 					//make new model and set settings 
 					arr.push(controller.createModel(child)); 
-
 				}); 
 				
 				//create Collection 
@@ -67,12 +66,13 @@ define(['jquery', 'underscore', 'backbone', 'less','Block', 'Panel','Page', 'Def
 			controller = this; 
 
 			//load class 
+			//klass = controller.getClass(props.className || model.get('defaultView') || 'Block', function(){}); 
 			klass = controller.get('classes')[ props.className || model.get('defaultView') || 'Block' ]; 
 
 			//create collections first 
 			if( props && props.subviews){ 
 				props.subviews = controller.createViewCollection(model, props.subviews); 
-			}
+			} 
 
 			//create object and set settings/options 
 			options = _.extend(props, {model: model}); 
@@ -202,12 +202,10 @@ define(['jquery', 'underscore', 'backbone', 'less','Block', 'Panel','Page', 'Def
 			var klass, controller; 
 			controller = this; 
 			//return class if available
-			if( klass = controller.get('classes')[name] ){
-				callback.call(ctx, klass); 
-			}else{
-				//otherwise load the class into the controller cache 
+			(klass = controller.get('classes')[name])?				
+				callback.call(ctx, klass): 			
 				this.loadClasses([name], callback, ctx); 
-			}
+			
 			return this; 
 		},
 		loadClasses: function( classes, callback, ctx ){
@@ -232,29 +230,29 @@ define(['jquery', 'underscore', 'backbone', 'less','Block', 'Panel','Page', 'Def
 			child = settings; 
 
 			//create a reference to all of the classes in the function so we can create objects
-			controller.loadClasses(settings.classes); 
+			controller.loadClasses(settings.classes, function(classes){
+				//create Page model 
+				child.page = controller.initializeState(child.page);  
+				child.href = child.name; 
 
-			//create Page model 
-			child.page = controller.initializeState(child.page);  
-			child.href = child.name; 
+				//if on the edit page set everything to null 
+				if(settings.name === 'edit'){
+					child.name = child.href = null; 
+					delete child._id; 
+				}
 
-			//if on the edit page set everything to null 
-			if(settings.name === 'edit'){
-				child.name = child.href = null; 
-				delete child._id; 
-			}
+				//start page
+				controller.startPage(child.page); 
 
-			//start page
-			controller.startPage(child.page); 
+				//cache page 
+				if(controller.collection){ 
+					controller.collection.add(child); 
+				}else{
+					controller.collection = new Backbone.Collection([child]); 
+				}	
 
-			//cache page 
-			if(controller.collection){ 
-				controller.collection.add(child); 
-			}else{
-				controller.collection = new Backbone.Collection([child]); 
-			}	
-
-			return this; 
+				return this; 
+			}); 			
 		}, 	
 		loadStorage: function(){
 			if(window.webkitStorageInfo){

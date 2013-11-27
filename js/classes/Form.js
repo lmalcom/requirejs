@@ -27,7 +27,7 @@ define(['Block'], function(Block){
 			'overflow':'hidden',
 			'transition':'all .5s', 
 			'-webkit-transition':'all .5s', 
-			'-moz-transition':'all .5s', 
+			'-moz-transition':'all .5s', 			
 			'form':{ 
 				'display':'none' 
 			}, 
@@ -71,8 +71,9 @@ define(['Block'], function(Block){
 			if(!this.inputs) return _.template('<i>this form has no inputs</i>'); 
 
 			//header is default header for the class, or the header suggested by the model or the default 
-			text += '<h3 class="header">' + (this.header || dat.header ||'Header') + '</h3>'; 
+			text += '<h3 class="header">' + (dat.header || this.header ||'Header') + '</h3>'; 
 			text += '<form class="inactive">'; 
+			
 			//create labels and inputs for all of the inputs in the array 
 			_.each(this.inputs.concat(dat.inputs || []), function(input){ 
 				//wrap each input in a div if toggle state is set 
@@ -188,23 +189,55 @@ define(['Block'], function(Block){
 			return ret; 
 		},
 		setFormData: function(ev, view){
+			var form = this; 
 			_.each(this.$el.find('input[type!=submit]'), function(input){
 				//get the name
 				var name, val; 
-				name = input.name,
+				name = (form.model.has('pseudoClass'))?
+					'&:' + form.model.get('pseudoClass'):				
+					input.name;
 
 				//find that value in the css object of the view
-				val = view.css.get(name) || null; 
+				console.log(name); 
+				if(view.css.has(name)){
+					if(typeof (view.css.get(name)) === 'object'){
+						val = view.css.get(name)[input.name];
+						console.log('val when has pseudo', val); 
+					}else{
+						val = view.css.get(name);
+					}
+				}else{
+					val = null; 
+				}
+				//val = view.css.get(name) || null; 
 
 				//set that value on the input or none (we dont want to accidentally set values on the objects)
 				input.value = val; 
 			})
 			return this; 
 		}, 
-		send: function(dat){
+		/*send: function(dat){
 			var target = this.model.get('edit').target; 
 			target.css.set(dat); 
 			target.$el.css(dat); 
+			return this; 
+		},*/
+		send: function(dat){
+			var target = this.model.get('edit').target, 
+				pageView = this.model.get('edit').model.get('page').get('page').view; 
+
+			if(this.model.has('pseudoClass')){
+				var dummy = {}; 
+				dummy['&:'+ this.model.get('pseudoClass')] = dat; 
+				console.log('dummy: ', dummy); 
+				target.css.set(dummy); 
+			}else{
+				target.css.set(dat); 
+				target.$el.css(dat); 
+			}
+
+			pageView.renderCSS(); 
+			
 			return this; 
 		},
 		submit: function(ev){ 

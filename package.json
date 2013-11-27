@@ -1,6 +1,6 @@
 {
 	"scripts": {"start": "node server.js"}, 
-	"name": "my lovely app", 
+	"name": "muffins", 
 	"version": "v0.10.22", 
 	"email" : "lerenzo@gmail.com", 
 	"dependencies":{

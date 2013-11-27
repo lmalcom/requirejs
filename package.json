@@ -1,11 +1,12 @@
 {
 	"name": "muffins", 
 	"version": "v0.10.22", 
+	"engines":{ "node": "v0.10.22" },
 	"email" : "lerenzo@gmail.com", 
 	"dependencies":{
-		"express":"2.x", 
-		"socket.io":"*", 
-		"twitter":"*", 
+		"express":"3.x", 
+		"socket.io":"", 
+		"twitter":"", 
 		"require":"", 
 		"mongodb":""
 	}, 

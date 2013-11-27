@@ -6,7 +6,7 @@ var app = express();
 //server for socket
 var server = require('http').createServer(app); 
 server.listen(process.env.PORT || 8801); 
-var io = require('socket.io').listen(8800); 
+var io = require('socket.io').listen(server); 
 io.set('log level', 1);
 
 

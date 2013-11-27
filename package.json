@@ -3,7 +3,7 @@
 	"version": "v0.10.22", 
 	"email" : "lerenzo@gmail.com", 
 	"dependencies":{
-		"express":"*", 
+		"express":"2.x", 
 		"socket.io":"*", 
 		"twitter":"*"
 	}

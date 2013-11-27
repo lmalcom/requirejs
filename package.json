@@ -1,7 +1,8 @@
 {
 	"scripts": {"start": "node server.js"}, 
 	"name": "muffins", 
-	"version": "v0.10.22", 
+	"version": "0.1", 
+	"engines" : { "node" : "v0.10.22" },
 	"email" : "lerenzo@gmail.com", 
 	"dependencies":{
 		"express":"", 

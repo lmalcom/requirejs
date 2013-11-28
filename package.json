@@ -1,21 +1,13 @@
 {
 	"name": "muffins",
 	"version": "0.0.1-1",
-	"engine": "node=v0.10.x",
-	"engines": {
-		"node": "v0.10.x"
-	},
-	"email": "lerenzo@gmail.com",
+	"engine": "node = 0.10.22",
+	"author": "lerenzo@gmail.com",
 	"dependencies": {
 		"express": "",
 		"socket.io": "",
 		"twitter": "",
 		"require": "",
 		"mongodb": ""
-	},
-	"scripts": {
-		"start": "node server.js"
-	},
-	"subdomain": "bubbles", 
-	"repository":""
+	}
 }

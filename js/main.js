@@ -1,5 +1,6 @@
 require.config({
 	baseUrl:'../js/classes', 
+	waitSeconds: 10,
 	shim : {
 		underscore : 
 		{
@@ -9,6 +10,10 @@ require.config({
 		{
 	      deps: ["underscore", "jquery"],
 	      exports: "Backbone"
+	    }, 
+	    Threex:{
+	    	deps: ["Three", "JSARToolkit"], 
+	    	exports: "Threex"
 	    }
 	},
 	packages: [
@@ -49,7 +54,7 @@ require.config({
 		}, 
 		{
 			name: 'io', 
-			location: 'http://' + window.location.hostname, 
+			location: 'http://' + window.location.hostname + ':8800', 
 			main: 'socket.io/socket.io.js'
 		}, 
 		{
@@ -61,6 +66,31 @@ require.config({
 			name: 'leafletcss', 
 			location: '../libs', 
 			main: 'leafletcss'
+		}, 
+		{
+			name: 'JSARToolkit', 
+			location: '../libs', 
+			main:'JSARToolKit'
+		}, 
+		{
+			name: 'Three', 
+			location: '../libs', 
+			main: 'Three'
+		}, 
+		{
+			name: 'Threex', 
+			location: '../libs', 
+			main: 'threex'
+		}, 
+		{
+			name: 'shimRequestAnimationFrame', 
+			location: '../libs', 
+			main: 'shimRequestAnimationFrame'
+		}, 
+		{
+			name: 'shimUserMedia', 
+			location: '../libs', 
+			main: 'shimUserMedia'
 		}, 
 	]
 }); 

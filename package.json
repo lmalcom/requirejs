@@ -1,6 +1,7 @@
 {
 	"name": "muffins",
 	"version": "0.0.1-1",
+	"engine": "node=v0.10.x",
 	"engines": {
 		"node": "v0.10.x"
 	},

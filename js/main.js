@@ -54,7 +54,7 @@ require.config({
 		}, 
 		{
 			name: 'io', 
-			location: 'http://' + window.location.hostname + ':8800', 
+			location: 'http://' + window.location.hostname, 
 			main: 'socket.io/socket.io.js'
 		}, 
 		{

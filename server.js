@@ -23,7 +23,7 @@ var createPage = function(pageName, res){
 	//get page settings based on name 
 	var html; 
 	db.getPage(pageName, function(page){ 
-		html = '<!DOCTYPE html><html><head>'; 
+		html = '<!DOCTYPE html><html><head><meta name="viewport" content="width=device-width, initial-scale=1.0">'; 
 		html += '<script type="text/javascript"> var Settings = ' + JSON.stringify(page) + '</script>'; 
 		html += '<script type="text/javascript" src="../js/libs/require.js" data-main = "../js/main.js"></script></head><body></body></html>'; 
 		res.send(html); 

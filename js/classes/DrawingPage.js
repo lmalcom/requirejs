@@ -14,7 +14,7 @@ define(['Page', 'io'], function(Page, io){
 			'mousedown': 'check', 
 			'mouseup'  : 'resolve', 
 		}), 
-		socket: io.connect('http://' + window.location.hostname),
+		socket: controller.socket,
 		requestAnimationFrame: window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame,
 		animated: true, 
 		rate: 50, 
@@ -152,17 +152,17 @@ define(['Page', 'io'], function(Page, io){
 					//send data to other sockets 
 					page.socket.emit('draw', {ev: {pageX: ev.pageX, pageY: ev.pageY}, state: page.brushSettings}); 
 				}); 
-			}
+			} 
 
 			//check to see if blocks are in viewport, if not delete them 
-			_.each(page.subviews, function(block){
+			_.each(page.subviews, function(block){ 
 				if(!block.inViewPort()) page.removeFromCollection(block); 
 			}); 
 
 			//if we intend to continue checking and adding boxes 
-			if(page.animated){
-				setTimeout(function(){
-					page.animate();
+			if(page.animated){ 
+				setTimeout(function(){ 
+					page.animate(); 
 				}, page.rate); 
 			}	
 			return this; 

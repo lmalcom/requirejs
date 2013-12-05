@@ -7,7 +7,7 @@ define(['Block'], function(Block){
 		events: { 
 			'change input[type=file]':'setImage', 
 			'click .formImg': 'changeFile', 
-			'click input[type=submit]': 'submit', 
+			'submit form': 'submit', 
 			'keyup input,textarea' : 'toggleSubmit', 
 			'blur input, textarea': 'toggleSubmit',
 			'click .deletebtn': 'deleteInput', 
@@ -198,11 +198,9 @@ define(['Block'], function(Block){
 					input.name;
 
 				//find that value in the css object of the view
-				console.log(name); 
 				if(view.css.has(name)){
 					if(typeof (view.css.get(name)) === 'object'){
 						val = view.css.get(name)[input.name];
-						console.log('val when has pseudo', val); 
 					}else{
 						val = view.css.get(name);
 					}
@@ -229,7 +227,6 @@ define(['Block'], function(Block){
 			if(this.model.has('pseudoClass')){
 				var dummy = {}; 
 				dummy['&:'+ this.model.get('pseudoClass')] = dat; 
-				console.log('dummy: ', dummy); 
 				target.css.set(dummy); 
 			}else{
 				target.css.set(dat); 

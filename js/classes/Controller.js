@@ -1,4 +1,4 @@
-define(['jquery', 'underscore', 'backbone', 'less','Block', 'Panel','Page', 'DefaultRouter', 'jquery.hammer'], function($, _, Backbone, less, Block, Panel, Page, Router){
+define(['jquery', 'underscore', 'backbone', 'less','Block', 'Panel','Page', 'DefaultRouter', 'io', 'jquery.hammer'], function($, _, Backbone, less, Block, Panel, Page, Router, io){
 	'use strict'; 
 
 	var Controller; 
@@ -11,6 +11,7 @@ define(['jquery', 'underscore', 'backbone', 'less','Block', 'Panel','Page', 'Def
 				}, 
 			modules: [] 
 		}, 
+		socket: io.connect('http://' + window.location.hostname + ':8800', {query: 'test=ohheeeey'}),
 		initialize: function( attributes ){ 
 			var controller = this; 
 			//set up metadata 
@@ -29,38 +30,38 @@ define(['jquery', 'underscore', 'backbone', 'less','Block', 'Panel','Page', 'Def
 
 		},	
 		createModel: function( child ){ 
-				var controller, klass, options, model; 
-				controller = this; 
+			var controller, klass, options, model; 
+			controller = this; 
 
-				//load class 
-				klass = controller.get('classes')[(child.className)] || Backbone.Model; 
+			//load class 
+			klass = controller.get('classes')[(child.className)] || Backbone.Model; 
 
-				//create collections first 
-				if( child.options && child.options.subcollection){ 
-					child.options.subcollection = controller.createModelCollection(child.options.subcollection); 
-				} 
+			//create collections first 
+			if( child.options && child.options.subcollection){ 
+				child.options.subcollection = controller.createModelCollection(child.options.subcollection); 
+			} 
 
-				//create object and set settings/options 
-				model = new klass(child.settings || {}, child.options || {}); 
-				return model; 
+			//create object and set settings/options 
+			model = new klass(child.settings || {}, child.options || {}); 
+			return model; 
 		}, 
-		createModelCollection: function( collection ){ 
-				//create collection from children 
-				var arr, coll, controller; 
-				controller = this; 
-				arr = []; 
+		/*createModelCollection: function( collection ){ 
+			//create collection from children 
+			var arr, coll, controller; 
+			controller = this; 
+			arr = []; 
 
-				//create all of the models 
-				_.each(collection, function (child){ 
-					//make new model and set settings 
-					arr.push(controller.createModel(child)); 
-				}); 
-				
-				//create Collection 
-				coll = new Backbone.Collection(arr); 
+			//create all of the models 
+			_.each(collection, function (child){ 
+				//make new model and set settings 
+				arr.push(controller.createModel(child)); 
+			}); 
+			
+			//create Collection 
+			coll = new Backbone.Collection(arr); 
 
-				return coll; 
-		},		
+			return coll; 
+		}, */
 		createView: function(model, props){ 
 			var controller, klass, options, view; 
 			controller = this; 
@@ -68,18 +69,17 @@ define(['jquery', 'underscore', 'backbone', 'less','Block', 'Panel','Page', 'Def
 			//load class 
 			//klass = controller.getClass(props.className || model.get('defaultView') || 'Block', function(){}); 
 			klass = controller.get('classes')[ props.className || model.get('defaultView') || 'Block' ]; 
-
 			//create collections first 
 			if( props && props.subviews){ 
 				props.subviews = controller.createViewCollection(model, props.subviews); 
 			} 
 
 			//create object and set settings/options 
-			options = _.extend(props, {model: model}); 
+			options = _.extend({}, props, {model: model}); 
 			view = new klass(options); 
 			return view; 
 		},
-		createViewCollection: function( model, subviewprops ){
+		/*createViewCollection: function( model, subviewprops ){
 			//create collection from children 
 			var arr, controller; 
 			controller = this; 
@@ -94,14 +94,14 @@ define(['jquery', 'underscore', 'backbone', 'less','Block', 'Panel','Page', 'Def
 			}); 
 
 			return arr; 
-		},
+		},*/
 		//takes the state JSON and creates a page collection
 		//this does NOT put it on the page, it only creates the collection 
 		initializeState: function( json ){
 			var controller, model, view, ret; 
-			controller = this; 
-			ret = {};
-
+			controller = this, 
+			ret = {}; 
+			//console.log('dat from initialize State', json); 
 			//add model and view 
 			ret.model = controller.createModel(json.modelProps || {}); 
 			ret.view = controller.createView(ret.model, json.viewProps || {}); 
@@ -152,7 +152,6 @@ define(['jquery', 'underscore', 'backbone', 'less','Block', 'Panel','Page', 'Def
 		saveState: function( page, name, location, callback ){ 
 			var controller, pageOb, state,json, blob; 
 			controller = this; 
-			console.log(page); 
 			//get the reference to the page that we are saving 
 			if(page){ 
 				//if a number is given, find it in the collection, else it should be an object 
@@ -175,7 +174,6 @@ define(['jquery', 'underscore', 'backbone', 'less','Block', 'Panel','Page', 'Def
 			//DATABASE OR SERVER
 			}else if(location && location === 'server'){
 				state.name = name;
-				console.log('pageOb', pageOb); 
 				state._id = pageOb.get('_id'); 
 				console.log('json that is being sent over', state);  
 				$.ajax({

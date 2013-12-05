@@ -29,6 +29,28 @@ define(['Panel', 'jquery.hammer'], function(Panel){
 
 			return this; 
 	   	}, 
+	   	//create block centered on that spot 
+		addBlock : function( stateJSON ){ 
+			//vars 
+			var state, width, height, pageModel, pageView; 
+			pageModel = this.model; 
+			pageView  = this; 
+			state 	  = stateJSON || {};  
+		
+			//create model and view 
+			state = controller.initializeState(state); 
+
+			//add to collections 
+			if(!pageModel.subcollection) pageModel.subcollection = new Backbone.Collection; 
+			pageModel.subcollection.add(state.model); 
+			pageView.subviews.push(state.view);  
+
+			//render html and css 
+			$(pageView.el).append(state.view.render().el); 
+			pageView.renderCSS(); 
+			
+			return this; 
+		}, 
 		renderCSS 	: function(){	
 			//create stylesheet and keep reference to the node 
 			if(!this.styleSheet){ 

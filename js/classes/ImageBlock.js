@@ -10,6 +10,10 @@ define(['Block'], function(Block){
 				'height':'100%'
 			}
 		}),
+		initialize: function(options){
+			Block.prototype.initialize.call(this, options); 
+			console.log(options); 
+		},
 		template: function(dat){
 			var template, type, txt; 
 			template = '', 

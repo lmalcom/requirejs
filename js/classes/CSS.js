@@ -11,7 +11,6 @@ define(['jquery', 'underscore', 'backbone'], function($, _, Backbone){
 						//set initial properties 
 						active = _.extend({}, attributes); 
 						this.set({active:active}); 
-						console.log(this)
 						this.parent = options.parent; 
 
 						//update the active property list on change 

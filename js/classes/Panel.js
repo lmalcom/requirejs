@@ -39,12 +39,11 @@ define(['Block'], function(Block){
 	   		}else{
 	   			//otherwise just have it render itself 
 	   			var page = null; 
-	   			if(!view.page){
+	   			if(!view.page){ 
 	   				page = 	(view.parent && !view.parent.parent)? view.parent: 
 	   						(panel.page)? panel.page: 
 	   						panel; 
-	   				console.log(page); 
-	   			}
+	   			} 
 	   			 
 
 	   			view.page = page; 
@@ -59,11 +58,10 @@ define(['Block'], function(Block){
 			var klass = this.defaultSubview || model.get('defaultView') || 'Block'; 
 			controller.getClass(klass, function(classOb){ 
 
-				//returned object is either the object or an array with one object
+				//returned object is either the object or an array with one object 
 				var view, options, page; 
 				page = (this.parent && this.parent.page)? this.parent.page: this; 
 				view = classOb[0] || classOb; 
-				console.log('page',page); 
 				options = _.extend({},options, {model:model, parent:panel, page:page}); 
 
 				view = new view(options); 
@@ -75,7 +73,7 @@ define(['Block'], function(Block){
 			}, this); 
 
 			return this; 
-	    },
+	    }, 
 	   	clear: function(){ 
 			this.$el.empty(); 
 			_.each(this.subviews, function(view){ 
@@ -92,7 +90,7 @@ define(['Block'], function(Block){
 
 	   				//remove view and model
 	   				view.model.destroy(), 
-	   				view.remove(); 	   			
+	   				view.remove(); 	 
 	   			}
 	   		})
 	   		return this; 

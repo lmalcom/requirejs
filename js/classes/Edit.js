@@ -1,4 +1,4 @@
-define(['require', 'CSS','Block', 'Panel', 'Page', 'Form', 'ColorForm', 'BorderForm', 'PublishForm','Button'], function(require, CSS, Block, Panel, Page, Form, ColorForm, BorderForm, PublishForm,Button){ 
+define(['require', 'CSS','Block', 'Panel', 'Page', 'Form', 'ColorForm', 'BorderForm', 'PublishForm','Button', 'LiveButton'], function(require, CSS, Block, Panel, Page, Form, ColorForm, BorderForm, PublishForm, Button, LiveButton){ 
 	'use strict'; 
 	var Edit = Page.extend({ 
 		//default settings for adding objects 
@@ -7,6 +7,7 @@ define(['require', 'CSS','Block', 'Panel', 'Page', 'Form', 'ColorForm', 'BorderF
 			'click':'hide', 
 			'click .Button':'save', 
 			'click #delete': 'deleteBlock', 
+			'click .LiveButton': 'live', 
 		}, 
 		defaultCSS: _.extend({}, Page.prototype.defaultCSS, { 
 			'@bgcolor': 'rgba(0,0,0, .5)', 
@@ -101,7 +102,7 @@ define(['require', 'CSS','Block', 'Panel', 'Page', 'Form', 'ColorForm', 'BorderF
 			var edit, inputs; 
 			edit = this; 
 			Page.prototype.initialize.call(this, options); 
-
+			//console.log('brush settings in initiliaze: ', this.brushSettings); 
 			//initialize basic forms for the edit page
 			if(!this.model.subcollection){
 				this.model.subcollection = new Backbone.Collection([ 
@@ -110,10 +111,11 @@ define(['require', 'CSS','Block', 'Panel', 'Page', 'Form', 'ColorForm', 'BorderF
 								new Backbone.Model({defaultView: 'ColorForm', edit: edit}),
 								new Backbone.Model({defaultView: 'ColorForm', header: 'Color:hover', pseudoClass: 'hover', edit: edit}),
 								new Backbone.Model({defaultView: 'BorderForm', edit: edit}),
-								new Backbone.Model({defaultView: 'BrushForm', edit: edit}), 		
+								new Backbone.Model({defaultView: 'ClassForm', edit: edit}), 		
 								new Backbone.Model({defaultView: 'PublishForm', edit: edit}), 
 							]), 						
 					}), 
+					new Backbone.Model({defaultView: 'LiveButton', edit: edit}), 
 				]); 
 			} 
 
@@ -142,42 +144,48 @@ define(['require', 'CSS','Block', 'Panel', 'Page', 'Form', 'ColorForm', 'BorderF
 		}, 
 		//create block centered on that spot 
 		addBlock : function( event, stateJSON ){ 
-			if(event.target == this.model.get('page').get('page').view.el){
+			if(event.target == this.model.get('page').get('page').view.el){ 
 				//vars
-				var state, width, height, pageModel, pageView; 
+				//console.log('brush settings: ', this.brushSettings); 
+				var state, stateOb, width, height, pageModel, pageView; 
 				pageModel = this.model.get('page').get('page').model; 
-				pageView = this.model.get('page').get('page').view; 
-				state = stateJSON.viewProps ? stateJSON : this.brushSettings ; 
-				width = (state.viewProps && state.viewProps.css && state.viewProps.css.width)? parseFloat(state.viewProps.css.width) : 0; 
-				height = (state.viewProps  && state.viewProps.css && state.viewProps.css.height)? parseFloat(state.viewProps.css.height) : 0; 
+				pageView  = this.model.get('page').get('page').view; 
+				state 	  = stateJSON.viewProps ? _.extend({}, stateJSON) : _.extend({}, this.brushSettings); 
+				width 	  = (state.viewProps && state.viewProps.css && state.viewProps.css.width)? parseFloat(state.viewProps.css.width) : 0; 
+				height 	  = (state.viewProps  && state.viewProps.css && state.viewProps.css.height)? parseFloat(state.viewProps.css.height) : 0; 
 			
 				//create model and view 
-				state = controller.initializeState(state); 
+				//console.log('brush settings: ', this.brushSettings); 
+				//console.log('state: ', state); 
+				stateOb = controller.initializeState(state); 
+				
 
 				//add to collections 
 				if(!pageModel.subcollection) pageModel.subcollection = new Backbone.Collection; 
-				pageModel.subcollection.add(state.model); 
-				pageView.subviews.push(state.view); 
+				pageModel.subcollection.add(stateOb.model); 
+				pageView.subviews.push(stateOb.view); 
 
 				//set X/Y 
-				state.view.x = event.pageX - width/2; 
-				state.view.y = event.pageY - height/2; 
+				state.viewProps.x = event.pageX - width/2; 
+				state.viewProps.y = event.pageY - height/2; 
+				stateOb.view.x = event.pageX - width/2; 
+				stateOb.view.y = event.pageY - height/2; 
 
 				//listen to object 
-				this.listenTo(state.view, 'mouseover', this.edit); 
-				this.edit(event, state.view); 
+				this.listenTo(stateOb.view, 'mouseover', this.edit); 
+				this.edit(event, stateOb.view); 
 
 				//render html and css 
-				$(pageView.el).append(state.view.render().el); 
+				$(pageView.el).append(stateOb.view.render().el); 
 				pageView.renderCSS(); 
-			}
-			
-			//return this; 
+
+				this.trigger('addBlock', state); 
+			} 
 			return this; 
 		}, 
-		deleteBlock: function(ev){
-			var pageModel = this.model.get('page').get('page').model,
-				pageView = this.model.get('page').get('page').view;
+		deleteBlock: function(ev){ 
+			var pageModel = this.model.get('page').get('page').model, 
+				pageView = this.model.get('page').get('page').view; 
 
 			//create visual feedback 
 			$(ev.target).css('opacity', 0); 
@@ -186,16 +194,17 @@ define(['require', 'CSS','Block', 'Panel', 'Page', 'Form', 'ColorForm', 'BorderF
 			//remove from view and model collections 
 			pageModel.subcollection.remove(this.target.model); 
 			pageView.removeFromCollection(this.target); 
+			this.trigger('deleteBlock'); 
 
 			return this; 
 
-		},
+		}, 
 		edit: function(event, view){ 
-			var position = view.$el.offset(),
-				deleteBtn = this.$el.find('#delete'),
-				box = this.$el.find('#editBox'),
-				posy = position.top - 20, //20 is half of X button width and height
-				posx = position.left + view.$el.width() - 20;
+			var position = view.$el.offset(), 
+				deleteBtn = this.$el.find('#delete'), 
+				box = this.$el.find('#editBox'), 
+				posy = position.top - 20, //20 is half of X button width and height 
+				posx = position.left + view.$el.width() - 20; 
 				this.target = view; 
 
 			//trigger change event 
@@ -204,7 +213,7 @@ define(['require', 'CSS','Block', 'Panel', 'Page', 'Form', 'ColorForm', 'BorderF
 			//insert X for deleting 
 			deleteBtn.css({top:posy, left:posx}); 
 
-			//shaded box for outline
+			//shaded box for outline 
 			box.css({top:position.top, left:position.left, width:view.$el.width(), height: view.$el.height()}); 
 
 			return this; 
@@ -257,8 +266,37 @@ define(['require', 'CSS','Block', 'Panel', 'Page', 'Form', 'ColorForm', 'BorderF
 	   		}
 	   		return this; 
 	   	}, 
-	   	load: function(name){
-	   		//show loading modal
+	   	load: function(name){ 
+	   		//show loading modal 
+	   	}, 
+	   	live: function(ev){ 
+	   		console.log('oh hey, creating a live page.......'); 
+	   		//create a unique id 
+	   		var edit = this, 
+	   			page = this.model.get('page').get('page'), 
+	   			json = page.view.saveState(); 
+
+	   		$.ajax({
+	   			type:'POST', 
+				data: json, 
+				url:'/createLive', 
+				success: function(res){
+					var res = JSON.parse(res), 
+					pageId = res.pageId; 
+					controller.get('router').navigate('/live/' + pageId, {trigger:true}); 
+
+					edit.on('addBlock', function(state){
+						controller.socket.emit('add', state); 
+					})
+				}, 
+				error: function(err){
+					console.log('Error: ', err); 
+				}
+			}); 	   		
+
+	   		
+
+	   		//set socket to send data to server when creating blocks 
 	   	}, 
 	   	publish: function(name){ 
 	   		controller.saveState(null, name || 'test', 'server', function(){ 

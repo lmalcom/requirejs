@@ -46,7 +46,7 @@ define(['CSS'], function(CSS){
 
 				//set properties onto the view
 				if(attributes){ 
-					var keys = _.omit(attributes, 'model', 'css'); 
+					var keys = _.omit(attributes, 'model', 'css', 'className'); 
 					_.each(keys, function(val, key, list){ 
 						view[key] = val; 
 					}) 
@@ -65,7 +65,7 @@ define(['CSS'], function(CSS){
 			        rect.left >= 0 &&
 			        rect.bottom <= (window.innerHeight || document. documentElement.clientHeight) &&
 			        rect.right <= (window.innerWidth || document. documentElement.clientWidth)
-			        );
+			    );
 			},
 			hide: function(){
 				var view, deferred; 
@@ -74,12 +74,13 @@ define(['CSS'], function(CSS){
 				if(view.$el.css('opacity') != 0){
 
 					//on transition end set display to none
-					view.$el.one('transitionEnd webkitTransitionEnd mozTransitionEnd', function(ev){
-						if(ev.originalEvent.propertyName === 'opacity'){
+					view.$el.on('transitionEnd webkitTransitionEnd mozTransitionEnd', function(ev){
+						if(ev.originalEvent.propertyName === 'opacity' && ev.originalEvent.target === view.el){
 							view.$el.css({
 								'display':'none', 
 							}); 
-						}					
+							view.$el.off('transitionEnd webkitTransitionEnd mozTransitionEnd'); 
+						}				
 					}); 
 					view.$el.css({'opacity':'0'}); 
 				}else{
@@ -141,7 +142,7 @@ define(['CSS'], function(CSS){
 						//get active css but omit the class default CSS
 						css: this.css.get('active'), 
 						/*css: _.omit(this.css.get('active'), _.keys(this.defaultCSS)), */
-						className: this.className
+						className: this.el.classList[this.el.classList.length-1]
 					}
 			}
 	});	

@@ -1,9 +1,9 @@
 define(['Form'], function(Form){ 
-	var BrushForm = {}; 
+	var ClassForm = {}; 
 
 	//Page View 
-	BrushForm = Form.extend({ 
-		className: Form.prototype.className + ' BrushForm ', 
+	ClassForm = Form.extend({ 
+		className: Form.prototype.className + ' ClassForm', 
 		events: _.extend({}, Form.prototype.events, { 
 			'change select':'setClass',  
 		}), 
@@ -67,6 +67,7 @@ define(['Form'], function(Form){
 			//reset model and view 
 			if(!this.setClass.model) this.setClass.model = new Backbone.Model; 
 			if(this.setClass.view) this.setClass.view.remove(); 
+			this.currentClass = name; 
 
 			//replace example container with new class 
 			controller.getClass(name, function(klass){ 
@@ -80,11 +81,10 @@ define(['Form'], function(Form){
 		}, 
 		send: function(){ 
 			//get the model/view props for the brush
-			var state = this.setClass.view.saveState(); 
-			this.model.get('edit').brushSettings = state; 
-			console.log('brush Settings: ', this.model.get('edit').brushSettings); 
+			this.model.get('edit').brushSettings.viewProps.className = this.currentClass; 
 			return this; 
 		},
+		toggleSubmit: function(){}
 	});  
-	return BrushForm; 
+	return ClassForm; 
 }); 

@@ -52,9 +52,14 @@ require.config({
 			location: '../libs', 
 			main: 'iframe_api'
 		}, 
-		{
+		/*{
 			name: 'io', 
 			location: 'http://' + window.location.hostname, 
+			main: 'socket.io/socket.io.js'
+		}, */
+		{
+			name: 'io', 
+			location: 'http://' + window.location.hostname + ':8800', 
 			main: 'socket.io/socket.io.js'
 		}, 
 		{
@@ -100,6 +105,6 @@ require(['Controller', 'DefaultRouter'], function(Controller, Router){
 	controller.loadPage(Settings); 
 
 	//initialize router with pages 
-	controller.set({router: new Router({parent:this})}); 
+	controller.set({router: new Router({parent:window.controller})}); 
 	Backbone.history.start({pushState: true, hashChange: false}); 
 }); 

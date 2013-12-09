@@ -4,8 +4,8 @@ define(['Form'], function(Form){
 	//Page View 
 	ButtonForm = Form.extend({ 
 		className: Form.prototype.className + ' ButtonForm',  
-		defaultCSS: _.extend({}, Form.prototype.defaulCSS, {
-			'width':'50%'
+		defaultCSS: _.extend({}, Form.prototype.defaultCSS, {
+			'width':'50%',
 			'height':'50%', 
 			'max-height':'100px',
 		}),

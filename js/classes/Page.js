@@ -36,20 +36,24 @@ define(['Panel', 'jquery.hammer'], function(Panel){
 			pageModel = this.model; 
 			pageView  = this; 
 			state 	  = stateJSON || {};  
+
+			controller.getClass(state.viewProps.className || 'Block', function(){
+				//create model and view 
+				state = controller.initializeState(state); 
+
+				//add to collections 
+				if(!pageModel.subcollection) pageModel.subcollection = new Backbone.Collection; 
+				pageModel.subcollection.add(state.model); 
+				pageView.subviews.push(state.view);  
+
+				//render html and css 
+				$(pageView.el).append(state.view.render().el); 
+				pageView.renderCSS(); 
+			})
 		
-			//create model and view 
-			state = controller.initializeState(state); 
-
-			//add to collections 
-			if(!pageModel.subcollection) pageModel.subcollection = new Backbone.Collection; 
-			pageModel.subcollection.add(state.model); 
-			pageView.subviews.push(state.view);  
-
-			//render html and css 
-			$(pageView.el).append(state.view.render().el); 
-			pageView.renderCSS(); 
 			
-			return this; 
+			
+			//return this; 
 		}, 
 		renderCSS 	: function(){	
 			//create stylesheet and keep reference to the node 

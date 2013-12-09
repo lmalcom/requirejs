@@ -57,5 +57,5 @@ define(['Form'], function(Form){
 			return this; 
 		},
 	});  
-	return Content; 
+	return ContentForm; 
 }); 

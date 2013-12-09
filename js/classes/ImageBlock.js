@@ -4,13 +4,13 @@ define(['Block'], function(Block){
 	//Page View 
 	ImageBlock = Block.extend({ 
 		className: Block.prototype.className + ' ImageBlock', 
-		defaultCSS: _.extend({}, Block.prototype.defaultCSS, {
-			'& img': {
+		defaultCSS: _.extend({}, Block.prototype.defaultCSS, { 
+			'& img': { 
 				'width':'100%', 
-				'height':'100%'
-			}
-		}),
-		initialize: function(options){
+				'height':'100%' 
+			} 
+		}), 
+		initialize: function(options){ 
 			Block.prototype.initialize.call(this, options); 
 			console.log(options); 
 		},

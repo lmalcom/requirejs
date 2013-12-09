@@ -33,7 +33,11 @@ define(['jquery', 'underscore', 'backbone'], function($, _, Backbone){
 	   		console.log('changing room!', pageId); 
 	   		controller.socket.on('create', function(data){
 	   			console.log('creating a new thingy...', data); 
-	   			controller.collection.at(0).get('page').view.addBlock(data); 
+	   			//check if class exists, then create 
+	   			
+	   				controller.getClass(data.viewProps.className, function(){
+	   					controller.collection.at(0).get('page').view.addBlock(data); 
+	   				})   			
 	   		})
 	   		controller.socket.emit('changeRoom', {pageId: pageId}); 
 	   		return this; 

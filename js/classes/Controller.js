@@ -76,6 +76,8 @@ define(['jquery', 'underscore', 'backbone', 'less','Block', 'Panel','Page', 'Def
 
 			//create object and set settings/options 
 			options = _.extend({}, props, {model: model}); 
+			//delete className property so that it doesn't overwrite the prototype classname 
+			if(options.className) delete options.className
 			view = new klass(options); 
 			return view; 
 		},

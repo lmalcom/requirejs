@@ -6,7 +6,7 @@ define(['CSS'], function(CSS){
 	/*BLOCK is a VIEW*/ 
 	Block = Backbone.View.extend({ 
 		//BACKBONE PROPERTIES AND FUNCTIONS
-			id: function(){return this.className + '_' + this.cid},						
+			//id: function(){return this.className + '_' + this.cid},						
 		    className: 'Block', 				
 			template: 	_.template(''), 
 
@@ -29,7 +29,6 @@ define(['CSS'], function(CSS){
 			initialize: function( attributes ){
 				var view, attrs, options; 
 				view = this; 
-				
 				//model events
 				this.listenTo(this.model, 'change', this.render); 
 				this.listenTo(this.model, 'destroy', this.remove); 
@@ -45,16 +44,17 @@ define(['CSS'], function(CSS){
 				}); 
 
 				//set properties onto the view
+				this.id = this.el.id =this.el.classList[this.el.classList.length-1] + '_' + this.cid; 
 				if(attributes){ 
 					var keys = _.omit(attributes, 'model', 'css', 'className'); 
 					_.each(keys, function(val, key, list){ 
 						view[key] = val; 
 					}) 
 				}
+
+				//add css 
 				attrs = (!attributes.immutableCSS && attributes.css)? attributes.css: {}; 
 				options = {parent:view}; 
-				//console.log(this);
-				//console.log('attrs in block', attrs); 
 				this.css =  new CSS(attributes.css, options);
 			},
 			inViewPort: function () {
@@ -74,15 +74,15 @@ define(['CSS'], function(CSS){
 				if(view.$el.css('opacity') != 0){
 
 					//on transition end set display to none
-					view.$el.on('transitionEnd webkitTransitionEnd mozTransitionEnd', function(ev){
+					view.$el.on('transitionEnd webkitTransitionEnd mozTransitionEnd', function handle(ev){
 						if(ev.originalEvent.propertyName === 'opacity' && ev.originalEvent.target === view.el){
-							view.$el.css({
-								'display':'none', 
-							}); 
-							view.$el.off('transitionEnd webkitTransitionEnd mozTransitionEnd'); 
+							view.$el.css({'display':'none'}); 
+							view.css.set({'display':'none'}); 
+							view.$el.off('transitionEnd webkitTransitionEnd mozTransitionEnd', handle); 
 						}				
 					}); 
 					view.$el.css({'opacity':'0'}); 
+					view.css.set({'opacity': 0}); 
 				}else{
 					view.$el.css({'display':'none'}); 
 				}				
@@ -97,13 +97,11 @@ define(['CSS'], function(CSS){
 				var view, display; 
 				view = this, 
 				display = this.defaultCSS.display !== 'none'? this.defaultCSS.display : 'inline-block'; 
-				this.$el.css({
-					'display': display, 
-				})
-				//on transition end set display to none
-				.css({
-					'opacity':'1', 
-				}); 
+				this.$el.css({'display': display})
+						.css({'opacity':'1'}); 
+				this.css.set({'display': display, 
+							  'opacity':'1'}); 
+				return this; 
 			}, 
 
 		//RENDERING FUNCTIONS 

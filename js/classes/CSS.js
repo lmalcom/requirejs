@@ -4,7 +4,7 @@ define(['jquery', 'underscore', 'backbone'], function($, _, Backbone){
 
 		CSS = Backbone.Model.extend({ 
 					defaults: {
-						'defaultInlineProperties': ['transform', '-webkit-transform', '-moz-transform'], 
+						'defaultInlineProperties': [], 
 					}, 
 					initialize: function (attributes, options){ 
 						var active; 
@@ -30,20 +30,20 @@ define(['jquery', 'underscore', 'backbone'], function($, _, Backbone){
 						var ret, parent, x, y, z, rotX, rotY, rotZ, scaleX, scaleY, scaleZ, skewX, skewY; 
 						ret = '',
 						parent = this.parent, 
-						x = parent.x, 
-						y = parent.y, 
-						z = parent.z, 
-						rotX = parent.rotX, 
-						rotY = parent.rotY, 
-						rotZ = parent.rotZ, 
+						x 	   = parent.x, 
+						y 	   = parent.y, 
+						z 	   = parent.z, 
+						rotX   = parent.rotX, 
+						rotY   = parent.rotY, 
+						rotZ   = parent.rotZ, 
 						scaleX = parent.scaleX, 
 						scaleY = parent.scaleY, 
 						scaleZ = parent.scaleZ, 
-						skewX = parent.skewX, 
-						skewY = parent.skewY; 
+						skewX  = parent.skewX, 
+						skewY  = parent.skewY; 
 
 						//transform properties
-						ret += 'translate3d(' + x + 'px, ' + y + 'px, ' + z + 'px ) '; 
+						if(x !== 0 || y !== 0 || z !== 0) ret += 'translate3d(' + x + 'px, ' + y + 'px, ' + z + 'px ) '; 
 
 						//rotate properties 
 						if(rotX) ret += 'rotateX(' + rotX + 'deg) '; 
@@ -68,32 +68,20 @@ define(['jquery', 'underscore', 'backbone'], function($, _, Backbone){
 						this.set({active: _.extend({}, this.get('active'), this.changed)}, {silent:true});
 						return this; 
 					},
-					//puts inline styles for things that need to be put inline
-					inline: function(props){
-						var css, inline; 
+					//removes all inline styles except for those listed in the arguments and default inline propertes
+					inline: function(){
+						var css, args; 
 
-						//get all properties from the css object that were asked for and the defaults
-						inline = _.pick(this.get('active'), props); 
-						css = _.extend({}, inline, this.transform());  
+						//get list of exceptions 	
+						args = Array.prototype.slice.call(arguments);
+						args.concat(this.get('defaultInlineProperties')); 
 
+						//get properties of exceptions and transform properties
+						css = _.extend({}, this.parent.$el.css(args), this.transform());  
+
+						//clear and replace inline style
+						this.parent.$el.attr('style', '');
 						this.parent.$el.css(css); 
-					},
-					//removes all inline styles except for those listed in the arguments
-					removeInlineStyles: function(){
-						if(this.parent && this.parent.$el){
-							var parent = this.parent, 				
-							args = Array.prototype.slice.call(arguments);
-							args.concat(this.get('defaultInlineProperties')); 
-
-							//get current values of the exceptions from arguments			
-							var css = (args.length < 1) ? '' : parent.get('$el').css(args); 
-
-							//clear style
-							parent.$el.attr('style', '');
-							
-							//reset inline styles from exceptions
-							parent.$el.css(css); 
-						}		
 					},
 					renderDefaultCSS: function(){
 						//copy the version for blocks
@@ -112,7 +100,7 @@ define(['jquery', 'underscore', 'backbone'], function($, _, Backbone){
 					render : function(){ 
 						var css, CSSstring; 
 						css = this; 
-						CSSstring = '#' + this.parent.id() + ' { '; 
+						CSSstring = '#' + this.parent.id + ' { '; 
 						//check that there are active properties to add to the CSS string
 						if( css.get('active') !== null ){
 							//print each of the active qualities

@@ -155,8 +155,6 @@ define(['require', 'CSS','Block', 'Panel', 'Page', 'Form', 'ColorForm', 'BorderF
 				height 	  = (state.viewProps  && state.viewProps.css && state.viewProps.css.height)? parseFloat(state.viewProps.css.height) : 0; 
 			
 				//create model and view 
-				//console.log('brush settings: ', this.brushSettings); 
-				//console.log('state: ', state); 
 				stateOb = controller.initializeState(state); 
 				
 

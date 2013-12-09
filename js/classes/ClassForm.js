@@ -45,24 +45,25 @@ define(['Form'], function(Form){
 		submitVal: 'Submit', 
 		setFormData: function(ev, view){ 
 			if (view && view.className){ 
-				//set selected to the proper class
-				this.$el.find('option[value=' + view.className + ']').attr('selected', true); 
+				//set selected to the proper class 
+				this.$el.find('option[value=' + view.el.classList[view.el.classList.length-1] + ']').attr('selected', true); 
 
 				//set the example in the window to be of the right class 
-				this.setClass(ev, view.className);
-			}
+				this.setClass(ev, view.el.classList[view.el.classList.length-1]); 
+			} 
 			return this; 
 		}, 
-		//sets the class of object in the example container
+		//sets the class of object in the example container 
 		setClass: function(ev, className){ 
-			var name, form, model; 
+			var name, form, model, scView; 
 			form = this, 
 
 			//strip spaces from name 
 			name = (className || ev.target.value).replace(/\s+/, ""); 
+			scView = this.setClass.view; 
 
 			//return if the class is the same as the current class 
-			if (this.setClass.view && this.setClass.view.className === name) return; 
+			if (scView && scView.el.classList[scView.el.classList.length-1] === name) return; 
 
 			//reset model and view 
 			if(!this.setClass.model) this.setClass.model = new Backbone.Model; 

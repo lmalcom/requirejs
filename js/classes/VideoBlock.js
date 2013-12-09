@@ -20,7 +20,6 @@ define(['Block', 'youtube'], function(Block, youtube){
 			block = this, 
 			div = this.el.firstChild, 
 			vid = this.model.get('video') || this.video; 
-			console.log('makin the vid'); 
 
 			//create an empty div for the youtube player to occupy. 
 			this.player = new YT.Player(div, { 
@@ -37,33 +36,33 @@ define(['Block', 'youtube'], function(Block, youtube){
 						}, 
 					'onStateChange' : block.onPlayerStateChange, 
 						}
-			});
-		},
+			}); 
+		}, 
+		onReady : function(event){ 
+			event.target.loadVideoById(vid); 
+		}, 
 		playVideo: function(){ 
 			if(this.model.get('player')){ 
 				this.model.get('pleyer').playVideo(); 
 			} 
 		}, 
-		loadVideo : function(id){
-			if(id &&  this.get('player')){
-					this.get('player').loadVideoById(id); 
-			}		
+		loadVideo : function(id){ 
+			if(id &&  this.get('player')){ 
+				this.get('player').loadVideoById(id); 
+			}
 		}, 
-		stopVideo : function(){
-			if(this.get('player')){
+		stopVideo : function(){ 
+			if(this.get('player')){ 
 				this.get('player').stopVideo(); 
 			}	
 		}, 
-		render: function(){
+		render: function(){ 
 			var block = this; 
 			Block.prototype.render.call(this); 
 			console.log('parent node for the video', this); 
-			/*this.listenToOnce(this.page || controller.collection.at(0).get('page').view, 'rendered', function check(){
-				console.log('oh hey!'); 
-				if(window.YT && window.YT.loaded) block.createPlayer(); 
-				else setTimeout(check, 500); 	
-			}); */
-			(function check(){
+
+			//check to see if it is rendered in order to create the player
+			(function check(){ 
 				console.log('oh hey!'); 
 				if(window.YT && window.YT.loaded && block.el.parentNode) block.createPlayer(); 
 				else setTimeout(check, 500); 	

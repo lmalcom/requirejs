@@ -11,6 +11,7 @@ define(['Block'], function(Block){
 			} 
 		}), 
 		initialize: function(options){ 
+			console.log('oh hey from the image block'); 
 			Block.prototype.initialize.call(this, options); 
 			console.log(options); 
 		},

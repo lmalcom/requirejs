@@ -29,7 +29,7 @@ var createPage = function(pageName, res){
 		html = '<!DOCTYPE html><html><head><meta name="viewport" content="width=device-width, initial-scale=1.0">'; 
 		html += '<script type="text/javascript"> var Settings = ' + JSON.stringify(page) + '</script>'; 
 		//html += '<script type="text/javascript" src="../js/libs/require.js" data-main = "../js/main.js"></script></head><body></body></html>'; 
-		html += '<script type="text/javascript" src="../js/libs/require.js" data-main = "../js/optimized-file.js"></script></head><body></body></html>'; 
+		html += '<script type="text/javascript" src="../js/libs/require.js" data-main = "../js/main.js"></script></head><body></body></html>'; 
 		res.send(html); 
 	}); 
 } 

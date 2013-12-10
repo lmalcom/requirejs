@@ -78,7 +78,8 @@ define(['Panel', 'jquery.hammer'], function(Panel){
 			(function addClasses(child){
 				if(child.subviews && child.subviews.length > 0){ 
 					_.each(child.subviews, function(subview){ 
-						classes.push(subview.className); 
+						var name = subview.el.classList[subview.el.classList.length-1];
+						classes.push(name); 
 						addClasses(subview); 
 					}); 
 				}

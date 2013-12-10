@@ -5,6 +5,7 @@ define(['jquery', 'underscore', 'backbone'], function($, _, Backbone){
 		routes: { 
 			':pagename/edit': 'edit', 
 			'edit': 'edit', 
+			'edit2':'edit2', 
 			'live/:pageId': 'live', 
 		}, 
 		initialize: function(options){ 
@@ -20,10 +21,25 @@ define(['jquery', 'underscore', 'backbone'], function($, _, Backbone){
 			}); 
 
 			//get the edit object and place it in the modules 
-			controller.getClass('Edit', function(Edit){ 
-				var editmod, editview; 
+			window.controller.getClass('Edit', function(klass){ 
+				var editmod, editview, Edit; 
+				Edit = (klass instanceof Array)? klass[0]: klass; 
 				editmod = new Backbone.Model({page: page || controller.collection.at(0)}); 
-				editview = new Edit[0]({model:editmod}); 
+				editview = new Edit({model:editmod}); 
+				controller.get('modules').push(editview);
+				editview.render(); 
+			}); 				
+		},
+		edit2: function(pagename){ 
+			var page; 
+			pagename = pagename || 'index'; 
+
+			//get the edit object and place it in the modules 
+			window.controller.getClass('Edit2', function(klass){ 
+				var editmod, editview, Edit; 
+				Edit = (klass instanceof Array)? klass[0]: klass; 
+				editmod = new Backbone.Model({page: page || controller.collection.at(0)}); 
+				editview = new Edit({model:editmod}); 
 				controller.get('modules').push(editview);
 				editview.render(); 
 			}); 				

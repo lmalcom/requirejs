@@ -62,7 +62,7 @@ define(['Block'], function(Block){
 			Block.prototype.initialize.call(this, options); 
 			this.el.action = this.model.get('action') || null;
 			this.el.enctype = "multipart/form-data"; 
-			this.listenTo(this.model.get('edit'), 'change:target', this.setFormData); 
+			//this.listenTo(this.model.get('edit'), 'change:target', this.setFormData); 
 		}, 
 		template: function(dat){
 			var text, form; 

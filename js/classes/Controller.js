@@ -13,7 +13,7 @@ define(['jquery', 'underscore', 'backbone', 'less','Block', 'Panel','Page', 'Def
 		}, 
 		socket: io.connect('http://' + window.location.hostname + ':8800', {query: 'test=ohheeeey'}),
 		initialize: function( attributes ){ 
-			var controller = this; 
+			var controller = window.controller = this; 
 			//set up metadata 
 
 			//initialize timeline 
@@ -25,8 +25,15 @@ define(['jquery', 'underscore', 'backbone', 'less','Block', 'Panel','Page', 'Def
 				if(options && options.subcollection) this.subcollection = options.subcollection; 
 			}
 
+			//load the page 
+			controller.loadPage(Settings, function(){
+				//initialize router with pages 
+				controller.set({router: new Router({parent: controller})}); 
+				Backbone.history.start({pushState: true, hashChange: false}); 
+			}); 			
+
 			//set up local storage
-			this.loadStorage(); 			
+			//this.loadStorage(); 			
 
 		},	
 		createModel: function( child ){ 
@@ -126,7 +133,8 @@ define(['jquery', 'underscore', 'backbone', 'less','Block', 'Panel','Page', 'Def
 				ret.subcollection = arr; 
 				ret.model.subcollection = new Backbone.Collection(modarr); 
 				ret.view.subviews = viewarr; 
-			}			
+			}		
+			console.log('controller: ', this, 'page: ', ret); 	
 			return ret; 
 		}, 		
 		//retrieve a json object with the page state from localstorage or the server 
@@ -224,7 +232,7 @@ define(['jquery', 'underscore', 'backbone', 'less','Block', 'Panel','Page', 'Def
 				});
 				return cache; 
 		},
-		loadPage: function( settings ){
+		loadPage: function( settings, callback ){
 			//adds all of the classes from the settings.classes list, prefixes it with require so we can call them later 
 			var controller = this, child; 
 			child = settings; 
@@ -236,7 +244,7 @@ define(['jquery', 'underscore', 'backbone', 'less','Block', 'Panel','Page', 'Def
 				child.href = child.name; 
 
 				//if on the edit page set everything to null 
-				if(settings.name === 'edit'){
+				if(settings.name === 'edit' || settings.name === 'edit2'){
 					child.name = child.href = null; 
 					delete child._id; 
 				}
@@ -251,7 +259,7 @@ define(['jquery', 'underscore', 'backbone', 'less','Block', 'Panel','Page', 'Def
 					controller.collection = new Backbone.Collection([child]); 
 				}	
 
-				return this; 
+				if(typeof callback === 'function') callback();  
 			}); 			
 		}, 	
 		loadStorage: function(){

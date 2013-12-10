@@ -102,9 +102,4 @@ require.config({
 require(['Controller', 'DefaultRouter'], function(Controller, Router){
 	//start module 
 	window.controller = new Controller; 
-	controller.loadPage(Settings); 
-
-	//initialize router with pages 
-	controller.set({router: new Router({parent:window.controller})}); 
-	Backbone.history.start({pushState: true, hashChange: false}); 
 }); 

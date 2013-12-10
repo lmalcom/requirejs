@@ -11,7 +11,7 @@ define(['jquery', 'underscore', 'backbone', 'less','Block', 'Panel','Page', 'Def
 				}, 
 			modules: [] 
 		}, 
-		socket: io.connect('http://' + window.location.hostname + ':8800', {query: 'test=ohheeeey'}),
+		socket: io.connect('http://' + window.location.hostname, {query: 'test=ohheeeey'}),
 		initialize: function( attributes ){ 
 			var controller = window.controller = this; 
 			//set up metadata 

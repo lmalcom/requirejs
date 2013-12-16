@@ -11,7 +11,7 @@ define(['jquery', 'underscore', 'backbone', 'less','Block', 'Panel','Page', 'Def
 				}, 
 			modules: [] 
 		}, 
-		socket: io.connect('http://' + window.location.hostname, {query: 'test=ohheeeey'}),
+		socket: io.connect('http://' + window.location.hostname + ':8800', {query: 'test=ohheeeey'}),
 		initialize: function( attributes ){ 
 			var controller = window.controller = this; 
 			//set up metadata 
@@ -133,8 +133,7 @@ define(['jquery', 'underscore', 'backbone', 'less','Block', 'Panel','Page', 'Def
 				ret.subcollection = arr; 
 				ret.model.subcollection = new Backbone.Collection(modarr); 
 				ret.view.subviews = viewarr; 
-			}		
-			console.log('controller: ', this, 'page: ', ret); 	
+			}			
 			return ret; 
 		}, 		
 		//retrieve a json object with the page state from localstorage or the server 
@@ -242,6 +241,7 @@ define(['jquery', 'underscore', 'backbone', 'less','Block', 'Panel','Page', 'Def
 				//create Page model 
 				child.page = controller.initializeState(child.page);  
 				child.href = child.name; 
+				child.page.view.controller = controller; 
 
 				//if on the edit page set everything to null 
 				if(settings.name === 'edit' || settings.name === 'edit2'){

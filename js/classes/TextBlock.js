@@ -3,15 +3,29 @@ define(['Block'], function(Block){
 
 	//Page View 
 	TextBlock = Block.extend({ 
-		className: Block.prototype.className + ' TextBlock',  
+		className: Block.prototype.className + ' TextBlock', 
 		template: _.template('< <%= type %> > <%= text %> < <%= type %> > '), 
 		template: function(dat){ 
-			var template, type, txt; 
-			template = '', 
-			type = dat.type || this.type, 
-			txt  = dat.text || this.text; 
+			var template = '', 
+				block 	 = this; 
 
-			template += '<' + type + '>' + txt + '</' + type + '>'; 
+			//if is array 
+			if(dat.inputs && _.isArray(dat.inputs)){ 
+				_.each(dat.inputs, function(textBlock){ 
+					var type = textBlock.type || block.type, 
+						txt  = textBlock.text || block.text; 
+					template = template.concat('<' + type + '>' + txt + '</' + type + '>'); 
+				})
+
+			//else is a single oject 
+			}else{ 
+
+				var type = dat.type || block.type, 
+					txt  = dat.text || block.text,
+					res; 
+				template = template.concat('<' + type + '>' + txt + '</' + type + '>'); 
+			}
+			
 			return _.template(template); 
 		}, 
 		type: 'p', 

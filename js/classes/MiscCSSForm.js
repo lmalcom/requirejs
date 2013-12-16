@@ -4,11 +4,18 @@ define(['Form'], function(Form){
 	//Page View 
 	MiscCSSForm = Form.extend({ 
 		className: Form.prototype.className + ' MiscCSSForm',  
+		defaultCSS: _.extend({}, Form.prototype.defaultCSS, {
+			'form input[type=submit]':{
+				'display':'none',
+			}
+		}),
 		inputs: [ 
-			//{type:"color", label: 'background-color as hex', name: "background-color"}, 
-			{type:"text", label: 'background-color as rgb', name: "background-color"}, 
+			{type:"text", label: 'display', name: "display"}, 
+			{type:"text", label: 'cursor', name: "cursor"}, 
+			{type:"text", label: 'display', name: "display"}, 
+			{type:"text", label: 'display', name: "display"}, 
 		],
-		header:'Color', 
+		header:'Misc. CSS', 
 		render: function(){ 
 			Form.prototype.render.call(this); 
 			this.$el.find('input[type=submit]').attr('disabled', false); 

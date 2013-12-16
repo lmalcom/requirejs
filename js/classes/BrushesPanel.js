@@ -7,12 +7,23 @@ define(['Panel', 'RemoveButton', 'ImageBlock', 'TextBlock'], function(Panel, Rem
 
 			//initialize basic forms for the panel
 			if(!this.model.subcollection){
-				this.model.subcollection = new Backbone.Collection([ 
-					new Backbone.Model({defaultView: 'StylePanel', pseudoClass: 'none'}),
-					new Backbone.Model({defaultView: 'StylePanel', pseudoClass: 'hover'}),
-					new Backbone.Model({defaultView: 'StylePanel', pseudoClass: 'active'}),
-				]); 
-			} 
+				this.model.subcollection = new Backbone.Collection([
+					new Backbone.Model({defaultView: 'Panel'}, {
+							subcollection: new Backbone.Collection([
+								new Backbone.Model({defaultView: 'ObjectInformationPanel'}),
+								new Backbone.Model({defaultView: 'ObjectContentPanel'}),
+								new Backbone.Model({defaultView: 'ObjectStylePanel'}),
+							]), 	
+					}), 
+					new Backbone.Model({defaultView: 'Panel'}, {
+							subcollection: new Backbone.Collection([
+								new Backbone.Model({defaultView: 'Button', text: 'Info'}),
+								new Backbone.Model({defaultView: 'Button', text: 'Content'}),
+								new Backbone.Model({defaultView: 'Button', text: 'Style'}),
+							]), 						
+					})
+				]);	
+			}
 		}
 	}); 
 	return BrushesPanel; 

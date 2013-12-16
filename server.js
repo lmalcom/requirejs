@@ -1,13 +1,13 @@
 var fs 		= require("fs"); 
-var db = require("./db.js"); 
+//var db = require("./db.js"); 
 var express = require("express"); 
 var app = express(); 
 
 //server for socket
 var server = require('http').createServer(app); 
 server.listen(process.env.PORT || 8801); 
-var io = require('socket.io').listen(server); 
-//var io = require('socket.io').listen(8800); 
+//var io = require('socket.io').listen(server); 
+var io = require('socket.io').listen(8800); 
 io.set('log level', 1);
 io.set('authorization', function (handshakeData, cb) {
     //if(handshakeData.query) console.log(handshakeData.query);
@@ -22,7 +22,7 @@ var t = new twitter({
     access_token_secret: 'bqOctAhzULJ4r3bkw1Vvya0qy8alp2Ak6pYfsklDtqc'     // <--- FILL ME IN
 });
 
-var createPage = function(pageName, res){ 
+/*var createPage = function(pageName, res){ 
 	//get page settings based on name 
 	var html; 
 	db.getPage(pageName, function(page){ 
@@ -32,7 +32,17 @@ var createPage = function(pageName, res){
 		html += '<script type="text/javascript" src="../js/libs/require.js" data-main = "../js/main.js"></script></head><body></body></html>'; 
 		res.send(html); 
 	}); 
-} 
+} */
+var createPage = function(pageName, res){ 
+	fs.readFile('./edit2.json', function (err, data) {
+	  	if (err) throw err;
+	  	var html; 
+	  	html = '<!DOCTYPE html><html><head><meta name="viewport" content="width=device-width, initial-scale=1.0">'; 
+		html += '<script type="text/javascript"> var Settings = ' + data + '</script>'; 
+		html += '<script type="text/javascript" src="../js/libs/require.js" data-main = "../js/main.js"></script></head><body></body></html>'; 
+		res.send(html); 
+	});
+}
 var createLivepage = function(pageId, res){ 
 	//get page settings based on name 
 	console.log('pages: ', pages); 

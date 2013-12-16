@@ -33,9 +33,9 @@ define(['jquery', 'underscore', 'backbone'], function($, _, Backbone){
 						x 	   = parent.x, 
 						y 	   = parent.y, 
 						z 	   = parent.z, 
-						rotX   = parent.rotX, 
-						rotY   = parent.rotY, 
-						rotZ   = parent.rotZ, 
+						rotX   = parent.rotateX, 
+						rotY   = parent.rotateY, 
+						rotZ   = parent.rotateZ, 
 						scaleX = parent.scaleX, 
 						scaleY = parent.scaleY, 
 						scaleZ = parent.scaleZ, 
@@ -82,6 +82,8 @@ define(['jquery', 'underscore', 'backbone'], function($, _, Backbone){
 						//clear and replace inline style
 						this.parent.$el.attr('style', '');
 						this.parent.$el.css(css); 
+
+						return this.parent;
 					},
 					renderDefaultCSS: function(){
 						//copy the version for blocks

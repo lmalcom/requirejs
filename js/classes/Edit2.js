@@ -1,19 +1,115 @@
-define(['require', 'CSS','Block', 'Panel', 'Page', 'Form', 'ColorForm', 'BorderForm', 'PublishForm','Button', 'LiveButton'], function(require, CSS, Block, Panel, Page, Form, ColorForm, BorderForm, PublishForm, Button, LiveButton){ 
+define(['require', 'CSS','Block', 'Panel', 'Page', 'Form', 'ColorForm', 'BorderForm', 'PublishForm','Button', 'LiveButton', 'ObjectSettingsPanel', 'BrushesPanel', 'MetaSettingsPanel', 'LiveSettingsPanel'], function(require, CSS, Block, Panel, Page, Form, ColorForm, BorderForm, PublishForm, Button, LiveButton){ 
 	'use strict'; 
 	var Edit2 = Page.extend({ 
 		//default settings for adding objects 
 		className: 'Edit2', 
 		events: { 
-			'click':'hide', 
+			'contextmenu':'hide', 
 			'click .Button':'save', 
 			'click #delete': 'deleteBlock', 
 			'click .LiveButton': 'live', 
+			'mousedown #editBox': 'dragEditBox'
 		}, 
 		defaultCSS: _.extend({}, Page.prototype.defaultCSS, { 
 			'@bgcolor': 'rgba(0,0,0, .5)', 
 			'background':'@bgcolor', 
 			'z-index': '2', 
 			'display':'none', 
+			'&>.Panel':{
+				'float':'left', 
+			},
+			'.Button':{
+				'border-radius':'0', 
+				'user-select':'none'
+			},
+			//header panel
+			'.Panel:nth-child(1)':{ 
+				'width':'100%', 
+				'height':'50px', 
+				'.Block, .Panel':{
+					'position':'relative', 
+					'float': 'left', 
+				},
+				'.Button':{
+					'width':'125px', 
+					'min-width':'0',
+				}, 
+				//text header with edit and meta
+				'.Panel':{
+					'width': (window.innerWidth - 500) + 'px',
+					'text-align':'center', 
+					'background-color':'rgba(0,0,0,.5)', 
+					'color':'rgb(175,175,175)',
+					'p':{
+						'margin':0, 
+					}, 
+					'h2':{ 
+						'margin':'auto auto' 
+					}, 
+					'.TextBlock a': { 
+						'margin-right': '15px' 
+					}, 
+					'.TextBlock a:hover':{ 
+						'cursor': 'pointer', 
+						'color':'rgb(50,50,150)' 
+					}, 
+				} 
+			}, 
+			//body panel
+			'.Panel:nth-child(2)':{ 
+				'& > .Panel':{ 
+					'float':'left', 
+					'height':'100%', 
+				}, 
+				//side panel
+				'.Panel:nth-child(1)':{ 
+					'width':'250px', 
+					'overflow':'hidden', 
+					//container panel that is as long as all of the panels inside (needed to create moving animation)
+					'.Panel':{ 
+						'position':'relative', 
+						'float':'left', 
+						'width':'500%', 
+						'height':'100%', 
+						//each panel inside 
+						'.Panel':{
+							'width':'250px',
+						}, 
+						'.ObjectSettingsPanel, .BrushesPanel':{
+							'.Panel':{
+								'width':'100%', 
+							},
+							//display area for info/content/style settings 
+							'& > .Panel:nth-child(1)':{ 
+								'height':'85%', 
+								'width':'300%',  
+								'& > *':{ 
+									'height':'100%', 
+									'width':'250px', 
+									'float':'left', 
+									'padding':'10px', 
+									'p':{ 
+										'text-align':'left' 
+									} 
+								} 
+							},
+							//buttons for info/content/style
+							'.Panel:nth-child(2)':{
+								'height':'15%', 
+								'.Button':{
+									'margin':0, 
+									'width': (1/3)*100 + '%',
+									'max-height':'100%'
+								}
+							},
+						}, 
+					},
+				}, 
+				//space for page
+				'.Panel:nth-child(2)':{
+					'width': window.innerWidth - 250 + 'px', 
+				}, 
+			},
 			'*':{
 				'transition':'all .25s', 
 				'-webkit-transition':'all .25s', 
@@ -21,30 +117,6 @@ define(['require', 'CSS','Block', 'Panel', 'Page', 'Form', 'ColorForm', 'BorderF
 				'box-sizing': 'border-box',
 				'-moz-box-sizing': 'border-box',
 				'-webkit-box-sizing': 'border-box',
-			},
-			'& > .Panel':{ 
-				'width':'25%', 
-				'height':'100%', 
-				'overflow-y':'auto',
-				'background-color':'darken(@bgcolor, 30%)' 
-			}, 
-			'.Form:hover':{
-				'background-color':'lighten(@bgcolor, 30%)', 
-			},
-			'.PublishForm:hover':{
-				'background':'rgba(69, 180, 196, 0.49)',
-			},
-			//the container panel for the buttons
-			'.Panel .Panel': {
-				'height': '60px', 
-				'position':'absolute', 
-				'bottom':'0', 
-				'left':'0', 
-			},
-			'.Panel .Panel .Button':{ 
-				'position':'relative', 
-				'width':'33%', 
-				'display':'inline-block'
 			}, 
 			'#delete':{
 				'position':'absolute', 
@@ -54,6 +126,9 @@ define(['require', 'CSS','Block', 'Panel', 'Page', 'Form', 'ColorForm', 'BorderF
 				'-moz-box-shadow': '0px 1px 10px 0px rgba(0,0,0, .3)', 
 				'-webkit-box-shadow': '0px 1px 10px 0px rgba(0,0,0, .3)', 
 				'box-shadow': '0px 1px 10px 0px rgba(0,0,0, .3)', 
+				'-webkit-transition': 'none', 
+				'-moz-transition': 'none', 
+				'transition': 'none', 
 			}, 
 			'#delete:hover':{
 				'background-color':'rgba(170,20,20,1)'
@@ -70,7 +145,12 @@ define(['require', 'CSS','Block', 'Panel', 'Page', 'Form', 'ColorForm', 'BorderF
 				'-moz-box-shadow': '0px 0px 20px 4px #77979A',
 				'-webkit-box-shadow': '0px 0px 20px 4px #77979A',
 				'box-shadow': '0px 0px 20px 4px #77979A',
-				'cursor':'pointer'
+				'cursor':'pointer', 
+				'background-color':'rgba(60, 190, 231, 0.42)', 
+				'user-select':'none',
+				'-webkit-transition': 'none', 
+				'-moz-transition': 'none', 
+				'transition': 'none', 
 			}, 
 			'#editBox:hover':{
 				'-moz-box-shadow': '0px 0px 48px 4px rgb(119, 151, 154)',
@@ -89,7 +169,7 @@ define(['require', 'CSS','Block', 'Panel', 'Page', 'Form', 'ColorForm', 'BorderF
 					'max-width':'100%', 
 					'text-align':'center',
 					'border':'1px black dotted', 
-					'background-color':'rgba(100, 100, 100, .7)', 
+					'background-color':'#ffb1fd', 
 					'z-index':'0', 
 					'&:hover':{ 
 						'background-color':'rgba(0,0,20,1)', 
@@ -111,9 +191,7 @@ define(['require', 'CSS','Block', 'Panel', 'Page', 'Form', 'ColorForm', 'BorderF
 								new Backbone.Model({defaultView: 'Button', text: 'Current'}),
 								new Backbone.Model({defaultView: 'Button', text: 'Brushes'}),
 								new Backbone.Model({defaultView: 'Panel'}, {subcollection: new Backbone.Collection([
-									new Backbone.Model({defaultView: 'TextBlock', text: 'Header'}),
-									new Backbone.Model({defaultView: 'TextBlock', text: 'edit name'}),
-									new Backbone.Model({defaultView: 'TextBlock', text: 'meta'}),
+									new Backbone.Model({defaultView: 'TextBlock', inputs: [{text: 'Header', type:'h2'}, {text: 'edit name', type: 'a'}, {text: 'meta', type: 'a'}] }), 
 								])}),
 								new Backbone.Model({defaultView: 'Button', text: 'Publish'}),
 								new Backbone.Model({defaultView: 'Button', text: 'Live'}),
@@ -121,12 +199,21 @@ define(['require', 'CSS','Block', 'Panel', 'Page', 'Form', 'ColorForm', 'BorderF
 					}), 
 					new Backbone.Model({defaultView: 'Panel'}, {
 							subcollection: new Backbone.Collection([
-								new Backbone.Model({defaultView: 'CurrentObjectPanel'}),
-								new Backbone.Model({defaultView: 'BrushesPanel'}),
-								new Backbone.Model({defaultView: 'ObjectSettingsPanel'}),
-								new Backbone.Model({defaultView: 'MetaSettingsPanel'}),
-								new Backbone.Model({defaultView: 'PublishSettingsPanel'}),
-								new Backbone.Model({defaultView: 'LiveSettingsPanel'}),
+								new Backbone.Model({defaultView: 'Panel'}, {
+									subcollection: new Backbone.Collection([
+										new Backbone.Model({defaultView: 'Panel'}, {
+											subcollection: new Backbone.Collection([
+												//new Backbone.Model({defaultView: 'CurrentObjectPanel'}),
+												new Backbone.Model({defaultView: 'ObjectSettingsPanel'}),
+												new Backbone.Model({defaultView: 'BrushesPanel'}),												
+												new Backbone.Model({defaultView: 'MetaSettingsPanel'}),
+												new Backbone.Model({defaultView: 'PublishSettingsPanel'}),
+												new Backbone.Model({defaultView: 'LiveSettingsPanel'}),
+												]), 
+										}), 
+									]), 
+								}), 
+								new Backbone.Model({defaultView: 'Panel'})
 							]), 
 					}), 
 				]); 
@@ -168,6 +255,7 @@ define(['require', 'CSS','Block', 'Panel', 'Page', 'Form', 'ColorForm', 'BorderF
 				height 	  = (state.viewProps  && state.viewProps.css && state.viewProps.css.height)? parseFloat(state.viewProps.css.height) : 0; 
 			
 				//create model and view 
+				state.viewProps.parent = pageView; 
 				stateOb = controller.initializeState(state); 
 				
 
@@ -210,25 +298,77 @@ define(['require', 'CSS','Block', 'Panel', 'Page', 'Form', 'ColorForm', 'BorderF
 			return this; 
 
 		}, 
-		edit: function(event, view){ 
-			var position = view.$el.offset(), 
+		edit: function(event, view){ 		
+
+			//trigger change event 
+			this.moveEditBox(view).trigger('change:target', event, view); 			
+
+			return this; 
+		}, 
+		moveEditBox: function(view){
+			if(view) this.target = view; 
+			var position = this.target.$el.offset(), 
 				deleteBtn = this.$el.find('#delete'), 
 				box = this.$el.find('#editBox'), 
 				posy = position.top - 20, //20 is half of X button width and height 
-				posx = position.left + view.$el.width() - 20; 
-				this.target = view; 
-
-			//trigger change event 
-			this.trigger('change:target', event, view); 
+				posx = position.left + this.target.$el.width() - 20; 
+				if(view) this.target = view; 
 
 			//insert X for deleting 
 			deleteBtn.css({top:posy, left:posx}); 
 
 			//shaded box for outline 
-			box.css({top:position.top, left:position.left, width:view.$el.width(), height: view.$el.height()}); 
-
+			box.css({
+				'-webkit-transform' : 'translate(' + position.left + 'px, ' + position.top + 'px)',
+				'-moz-transform' : 'translate(' + position.left + 'px, ' + position.top + 'px)',
+				width:this.target.$el.width(), 
+				height: this.target.$el.height()
+			}); 
 			return this; 
-		}, 
+		},
+		dragEditBox: function(ev){ 
+			var edit = this; 
+			var target = this.target; 
+			var offsetX = parseFloat(target.x - ev.pageX); 
+			var offsetY = parseFloat(target.y - ev.pageY);  
+			var box = this.$el.find('#editBox');
+			var deleteBtn = this.$el.find('#delete'); 
+
+			//temporarily set their position transition to none 
+			target.$el.css({
+				'-webkit-transition': 'none', 
+				'-moz-transition': 'none', 
+				'transition': 'none', 
+			}); 
+			deleteBtn.css({'opacity': 0});
+
+			function drag(newEv){ 
+				var newX = newEv.pageX; 
+				var newY = newEv.pageY; 
+				var diffX = newX + offsetX; 
+				var diffY = newY + offsetY;
+				target.x = diffX; 
+				target.y = diffY; 
+				target.$el.css({
+					'-webkit-transform' : 'translate(' + diffX + 'px, ' + diffY + 'px)',
+					'-moz-transform' : 'translate(' + diffX + 'px, ' + diffY + 'px)',
+					'transform' : 'translate(' + diffX + 'px, ' + diffY + 'px)',
+				});
+				box.css({
+					'-webkit-transform' : 'translate(' + diffX + 'px, ' + diffY + 'px)',
+					'-moz-transform' : 'translate(' + diffX + 'px, ' + diffY + 'px)',
+				}); 
+			}
+			$(document).on('mousemove', drag)
+			$(document).one('mouseup', function(){
+				box.attr('style', ''); 
+				edit.moveEditBox(); 
+				deleteBtn.css({'opacity': 1});
+				target.css.inline(); 
+				$(document).off('mousemove', drag); 
+			})
+			return this; 
+		},
 		//
 		showEditingPanel: function(event){ 
 			event.preventDefault(); 
@@ -258,9 +398,10 @@ define(['require', 'CSS','Block', 'Panel', 'Page', 'Form', 'ColorForm', 'BorderF
 			return this; 
 	   	}, 
 	   	hide: function(ev){ 
-	   		if(ev.target === this.el){
+	   		ev.preventDefault(); 
+	   		//if(ev.target === this.el){
 	   			Panel.prototype.hide.call(this); 
-	   		}
+	   		//}
 	   		return this; 
 	   	}, 
 	   	save: function(ev){

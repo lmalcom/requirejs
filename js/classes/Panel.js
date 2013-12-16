@@ -36,7 +36,7 @@ define(['Block'], function(Block){
 		   			panel.$el.append(newView.render().el); 
 		   			return newView; 
 	   			}, panel); 
-	   		}else{
+	   		}else{ 
 	   			//otherwise just have it render itself 
 	   			var page = null; 
 	   			if(!view.page){ 
@@ -45,7 +45,6 @@ define(['Block'], function(Block){
 	   						panel; 
 	   			} 
 	   			 
-
 	   			view.page = page; 
 	   			panel.$el.append(view.render().el); 
 		   		return view; 

@@ -29,6 +29,7 @@ define(['CSS'], function(CSS){
 			initialize: function( attributes ){
 				var view, attrs, options; 
 				view = this; 
+
 				//model events
 				this.listenTo(this.model, 'change', this.render); 
 				this.listenTo(this.model, 'destroy', this.remove); 
@@ -51,6 +52,13 @@ define(['CSS'], function(CSS){
 						view[key] = val; 
 					}) 
 				}
+
+				//parent page 
+				this.page = (function findPage(child){
+					return 	(child.parent && child.parent.parent)? findPage(child.parent): 
+							(child.parent)? child.parent: 
+							child; 
+				})(this); 
 
 				//add css 
 				attrs = (!attributes.immutableCSS && attributes.css)? attributes.css: {}; 

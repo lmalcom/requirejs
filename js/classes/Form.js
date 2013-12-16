@@ -6,6 +6,8 @@ define(['Block'], function(Block){
 		className: 'Form',  
 		events: { 
 			'change input[type=file]':'setImage', 
+			'change input[type=number]':'setNumber', 
+			'mousedown input[type=number]':'dragNumber', 
 			'click .formImg': 'changeFile', 
 			'submit form': 'submit', 
 			'keyup input,textarea' : 'toggleSubmit', 
@@ -13,12 +15,12 @@ define(['Block'], function(Block){
 			'click .deletebtn': 'deleteInput', 
 			'click .header' : 'toggleActive', 
 			'setFormData': 'setFormData'
-		},
-		defaultCSS: _.extend({}, Block.prototype.defaultCSS, {
+		}, 
+		defaultCSS: _.extend({}, Block.prototype.defaultCSS, { 
 			'width'	: '100%', 
 			'max-width':'400px', 
 			'height'	: 'auto', 
-			'padding' : '15px', 
+			//'padding' : '15px', 
 			'color': 'rgb(200,200,200)', 
 			'background':'rgba(0,0,0,.75)', 
 			'-moz-box-shadow': '0px 1px 10px 0px rgba(0,0,0, .3)', 
@@ -29,12 +31,15 @@ define(['Block'], function(Block){
 			'-webkit-transition':'all .5s', 
 			'-moz-transition':'all .5s', 			
 			'form':{ 
-				'display':'none' 
+				'max-height':'0', 
+				'opacity':'0',
+				'overflow':'hidden',
 			}, 
 			'input' : { 
-				'width':'100%', 
-				'display':'block', 
-				'margin':'10px auto', 
+				'width':'33%', 
+				'display':'inline-block', 
+				'float':'left',
+				//'margin':'10px auto', 
 				'transition':'all .5s', 
 				'-webkit-transition':'all .5s', 
 				'-moz-transition':'all .5s'
@@ -43,26 +48,34 @@ define(['Block'], function(Block){
 				'text-align':'center', 
 				'margin':'10px 0', 
 				'cursor':'pointer', 
+				'height':'25px',
 			}, 
 			'label' : {
-				'display':'block', 
-				'margin':'10px auto'
-			},
-			'.FormImg':{
+				'padding':'0 10%',
+				'display':'inline-block', 
+				'margin':'10px auto',
+				'width':'66%', 
+				'float':'left', 
+				'text-align':'right'
+			}, 
+			'.FormImg':{ 
 				'display':'block', 
 				'min-width':'200px', 
 				'min-height':'200px', 
-				'text-align':'center'
+				'text-align':'center' 
 			}, 
-			'input[type=submit]':{
-				'position': 'relative'
-			},
-		}), 	
-		initialize: function( options ){
+			'input[type=submit]':{ 
+				'position': 'relative' 
+			}, 
+			'input[type=number]':{
+				'cursor':'move'
+			}
+		}), 
+		initialize: function( options ){ 
 			Block.prototype.initialize.call(this, options); 
-			this.el.action = this.model.get('action') || null;
+			this.el.action = this.model.get('action') || null; 
 			this.el.enctype = "multipart/form-data"; 
-			//this.listenTo(this.model.get('edit'), 'change:target', this.setFormData); 
+			this.listenTo(this.page, 'change:target', this.setFormData); 
 		}, 
 		template: function(dat){
 			var text, form; 
@@ -79,15 +92,17 @@ define(['Block'], function(Block){
 				//wrap each input in a div if toggle state is set 
 				//this is so that we can put a +/x button on the right of the input 
 				if(input.label) text +=		'<label>' + input.label + '</label>'; 
-				if(form.allowToggleState) text+= '<div>'; 						
+				if(form.allowToggleState || input.type === 'color') text+= '<div>'; 						
 					text +=		input.type == 'textarea' ? '<textarea ': '<input type="' + (input.type || 'text') + '"'; 
 					text +=		'name = "' + (input.name || '') + '"'; 
 					text +=		'placeholder="' + (input.text || '') + '"'; 
+					if(input.type == 'number') text += 'min="-9999" max="9999" value="' + (input.value || 0) + '"'
 					text +=		input.type == 'file' ? 'style="display:none">' : '>'; 
-					text +=		input.type == 'textarea' ? '</textarea>': '</input">'; 
-					if(input.type =='file') text+= '<a class="formImg" style="background-image:url(' + "'" + input.src +"'" + ')"></a>'; 
-					if(form.allowToggleState) text+= '<a class="deletebtn">X</a>'; 
-				if(form.allowToggleState) text+= '</div>'; 
+					if(input.type == 'textarea') text += '</textarea>'; 
+					if(input.type =='file') text += '<a class="formImg" style="background-image:url(' + "'" + input.src +"'" + ')"></a>'; 
+					if(input.type === 'color') text += '<label> R: </label><input type="number" min="0" max="255" ' + 'name = "' + (input.name || '') + '-r"><label> G: </label><input type="number" min="0" max="255" ' + 'name = "' + (input.name || '') + '-g"><label> B: </label><input type="number" min="0" max="255" ' + 'name = "' + (input.name || '') + '-b"><label> Alpha: </label><input type="number" value="0" ' + 'name = "' + (input.name || '') + '-alpha"> ';
+					if(form.allowToggleState) text += '<a class="deletebtn">X</a>'; 
+				if(form.allowToggleState || input.type === 'color') text+= '</div>'; 
 			}); 
 
 			//submit button
@@ -127,7 +142,7 @@ define(['Block'], function(Block){
 		}, 
 		toggleActive: function(ev){
 			var form = this.$el.find('form'); 
-			(form.css('display') !== 'none')? form.fadeOut(): form.fadeIn(); 
+			(form.css('max-height') == '9999px')? form.css({'max-height':0, 'opacity':0}): form.css({'max-height':'9999px', 'opacity':1}); 
 			return this; 
 		},
 		toggleSubmit: function(){
@@ -190,39 +205,58 @@ define(['Block'], function(Block){
 		},
 		setFormData: function(ev, view){
 			var form = this; 
+			if(!view) view = this.page.target; 
+
+			//by default checks CSS values
 			_.each(this.$el.find('input[type!=submit]'), function(input){
 				//get the name
-				var name, val; 
-				name = (form.model.has('pseudoClass'))?
-					'&:' + form.model.get('pseudoClass'):				
-					input.name;
+				var name, val = null, pseudoClass; 
+				if(pseudoclass = form.parent.pseudoClass) pseudoClass = '&:' + pseudoclass;			
+				name = input.name;
 
 				//find that value in the css object of the view
-				if(view.css.has(name)){
-					if(typeof (view.css.get(name)) === 'object'){
-						val = view.css.get(name)[input.name];
-					}else{
-						val = view.css.get(name);
-					}
+				if(pseudoclass = view.css.get(pseudoClass)){
+					val = pseudoclass[name]; 
 				}else{
-					val = null; 
+					val = view.css.get(name);
 				}
-				//val = view.css.get(name) || null; 
-
+				
 				//set that value on the input or none (we dont want to accidentally set values on the objects)
 				input.value = val; 
-			})
+			}) 
 			return this; 
 		}, 
-		/*send: function(dat){
-			var target = this.model.get('edit').target; 
-			target.css.set(dat); 
-			target.$el.css(dat); 
+		setNumber: function(ev){ 
+			console.log(ev); 
 			return this; 
-		},*/
+		}, 
+		dragNumber: function(ev){ 
+			var initialX = ev.pageX; 
+			var target = ev.target; 
+			var viewTarget = this.page.target; 
+			viewTarget.$el.css({
+				'-webkit-transition': 'none', 
+				'-moz-transition': 'none', 
+				'transition': 'none', 
+			}); 
+			function drag(newEv){ 
+				var newX = newEv.pageX; 
+				var diffX = newX - initialX; 
+				var newVal = target.valueAsNumber + diffX; 
+				initialX = newX; 
+				if(newVal <= target.max && newVal >= target.min) target.valueAsNumber = newVal
+				$(target).trigger('input'); 
+			}
+			$(document).on('mousemove', drag)
+			$(document).one('mouseup', function(){
+				viewTarget.page.renderCSS(); 
+				$(document).off('mousemove', drag); 
+			})
+			return this; 
+		},
 		send: function(dat){
-			var target = this.model.get('edit').target, 
-				pageView = this.model.get('edit').model.get('page').get('page').view; 
+			var target = this.page.target, 
+				pageView = this.page.model.get('page').get('page').view; 
 
 			if(this.model.has('pseudoClass')){
 				var dummy = {}; 
@@ -246,6 +280,7 @@ define(['Block'], function(Block){
 
 			//send to action or alternative 
 			this.send(formData); 
+			console.log(this); 
 		}
 	});  
 	return Form; 

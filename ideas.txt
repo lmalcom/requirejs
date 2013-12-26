@@ -1,0 +1,7 @@
+add gestures for the 
+
+2. check state of when things are loaded. 
+
+3. synchonous rendering 
+
+4. loading thing so we no its still rendering 

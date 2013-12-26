@@ -1,4 +1,4 @@
-define(['require', 'CSS','Block', 'Panel', 'Page', 'Form', 'ColorForm', 'BorderForm', 'PublishForm','Button', 'LiveButton', 'ObjectSettingsPanel', 'BrushesPanel', 'MetaSettingsPanel', 'LiveSettingsPanel'], function(require, CSS, Block, Panel, Page, Form, ColorForm, BorderForm, PublishForm, Button, LiveButton){ 
+define(['require', 'CSS','Block', 'Panel', 'Page', 'Form', 'ColorForm', 'BorderForm', 'PublishForm','Button', 'LiveButton', 'ObjectSettingsPanel', 'BrushesPanel', 'MetaSettingsPanel', 'LiveSettingsPanel', 'VideoBlock', 'ImageBlock'], function(require, CSS, Block, Panel, Page, Form, ColorForm, BorderForm, PublishForm, Button, LiveButton){ 
 	'use strict'; 
 	var Edit2 = Page.extend({ 
 		//default settings for adding objects 
@@ -36,7 +36,7 @@ define(['require', 'CSS','Block', 'Panel', 'Page', 'Form', 'ColorForm', 'BorderF
 				}, 
 				//text header with edit and meta
 				'.Panel':{
-					'width': (window.innerWidth - 500) + 'px',
+					'width': "~`window.innerWidth - 500 + 'px'`",
 					'text-align':'center', 
 					'background-color':'rgba(0,0,0,.5)', 
 					'color':'rgb(175,175,175)',
@@ -110,15 +110,15 @@ define(['require', 'CSS','Block', 'Panel', 'Page', 'Form', 'ColorForm', 'BorderF
 					'width': window.innerWidth - 250 + 'px', 
 				}, 
 			},
-			'*':{
+			'*':{ 
 				'transition':'all .25s', 
 				'-webkit-transition':'all .25s', 
-				'-moz-transition':'all .25s', 
-				'box-sizing': 'border-box',
-				'-moz-box-sizing': 'border-box',
-				'-webkit-box-sizing': 'border-box',
+				'-moz-transition':'all .25s',  
+				'box-sizing': 'border-box', 
+				'-moz-box-sizing': 'border-box', 
+				'-webkit-box-sizing': 'border-box', 
 			}, 
-			'#delete':{
+			'#delete':{ 
 				'position':'absolute', 
 				'background-color':'rgba(150,50,50,.8)', 
 				'border-radius':'100%', 
@@ -161,6 +161,7 @@ define(['require', 'CSS','Block', 'Panel', 'Page', 'Form', 'ColorForm', 'BorderF
 		brushSettings: { 
 			modelProps: {}, 
 			viewProps: { 
+				className: "TextBlock",
 				css: { 
 					'position':'fixed',
 					'width':'200px', 
@@ -169,7 +170,8 @@ define(['require', 'CSS','Block', 'Panel', 'Page', 'Form', 'ColorForm', 'BorderF
 					'max-width':'100%', 
 					'text-align':'center',
 					'border':'1px black dotted', 
-					'background-color':'#ffb1fd', 
+					'background-color':'rgba(0,0,20,.5)', 
+					//'color':'rgba(0,0,20,.5)', 
 					'z-index':'0', 
 					'&:hover':{ 
 						'background-color':'rgba(0,0,20,1)', 
@@ -236,6 +238,7 @@ define(['require', 'CSS','Block', 'Panel', 'Page', 'Form', 'ColorForm', 'BorderF
 				edit.listenTo(page.view, 'click', edit.addBlock); 
 				_.each(page.view.subviews, function( view ){ 
 					edit.listenTo(view, 'mouseover', edit.edit); 
+					edit.listenTo(view, 'change', edit.edit);
 				}); 
 			} 
 

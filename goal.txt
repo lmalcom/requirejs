@@ -1,0 +1,13 @@
+1. initial users: early adopters. Creators. people who want to visualize something. Only talking about it terms of maps for now for scope problem. someone who has a lot of data that has a geographic connection and they want an easy/intuitive way to navigate and filter the data. general maps are aggregates. this is different because it gives you a way to interact with INDIVIDUAL POINTS OF DATA. tHEY SHOULD BE ABLE TO ZOOM IN TO THE TIP OF IT AND THE ZOOM BACK OUT. 
+
+Hobbyist. I'm a birdwatcher and I want to be able to take a picture of the bird and let other bird watchers do the same thing. Snowboarders and their favorite spot 
+CREATE/ADD TO MAP
+
+2nd type of user: someone who knows there are interesting types of maps and they want to come in and view the data. similar to wikipedia. VIEW
+
+Big project: MOVEMENT FOR PEACE 
+imagine different data sets for different types of artists (painters, musicians, animators etc). I want to see painters, trippy music, animation and those are the things that are going to populate my map (people who are using the platform). individual artists can upload their own collections and we can see. 
+
+1. it seems like mfp and art maps are pretty different ideas, how are they going to be intuitively linked? 
+
+2. how do artists align their work in space? Is lat/lon a forced attribute 

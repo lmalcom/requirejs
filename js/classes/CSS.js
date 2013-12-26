@@ -18,7 +18,6 @@ define(['jquery', 'underscore', 'backbone'], function($, _, Backbone){
 
 						//transform changes
 						this.parent.on('change', function(){
-							alert('oh hey the x changed!'); 
 							this.inline({
 								'transform': 'translateX(' + this.parent.x + 'px)', 
 								'-webkit-transform': 'translateX(' + this.parent.x + 'px)', 
@@ -54,7 +53,7 @@ define(['jquery', 'underscore', 'backbone'], function($, _, Backbone){
 						if(scaleX || scaleY) ret += 'scale3d(' + (scaleX || 0) + ', ' + (scaleY || 0) + ') '; 
 
 						//skew properties
-						if(skewX || skewY) ret += 'skew(' + (skewX || 0) + ', ' + (skewY || 0) + ') '; 
+						if(skewX || skewY) ret += 'skew(' + (skewX || 0) + 'deg, ' + (skewY || 0) + 'deg) '; 
 
 						//return object with domstring for each type of browser
 						return {

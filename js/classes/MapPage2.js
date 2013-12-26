@@ -1,24 +1,25 @@
-define(['Page', 'leaflet', 'leafletcss'], function(Page, leaflet){
-	var MapPage = {}; 
+define(['Page','leaflet', 'leafletcss'], function(Page, leaflet){ 
+	var MapPage2 = {}; 
 
 	//Page View 
-	MapPage = Page.extend({ 
-		className: Page.prototype.className + ' MapPage',
+	MapPage2 = Page.extend({ 
+		className: Page.prototype.className + ' MapPage2',
 		defaultCSS: _.extend({}, Page.prototype.defaultCSS, {
-			'position':'fixed',
 			'.container':{
 				'width':'100%', 
-				'height':'100%', 
-			} 
-		}), 
+				'height':'100%'
+			}
+		}),
 		events: { 
-			'mousemove':'addMarker', 
-			'click .container': 'addMarker'
+			'click':'addMarker', 
 		}, 
-		center: [-34.610299, -58.393273699999995], 
 		template: function(){
 			return _.template('<div class="container"></div>');
 		},
+		addMarker: function(ev){ 
+			console.dir(ev); 
+			return this; 
+		}, 
 		render: function(){
 			var page = this; 
 
@@ -30,7 +31,7 @@ define(['Page', 'leaflet', 'leafletcss'], function(Page, leaflet){
 					page.renderCSS();
 				}).done(function(){
 				  	//then add map
-					var map = leaflet.map(page.$('.container')[0], {
+					var map = leaflet.map(page.el.firstChild, {
 					    center: page.center, 
 					    zoom: 13 
 					}); 
@@ -46,12 +47,13 @@ define(['Page', 'leaflet', 'leafletcss'], function(Page, leaflet){
 
 					leaflet.marker(page.center).addTo(map);
 					//leaflet.marker([50.505, -0.09], {icon: myIcon}).addTo(map); 
-					map.on('mousemove', function(ev){
-						console.log('ev: ', ev); 
-					}); 
-					map.on('check', function(){
-						alert('oh heeeey'); 
+
+					map.on('click', function(ev){
+						_.each(ev, function(val, key, list){
+							$('body').append(key + ': ' + val + ';\n\n'); 
+						})
 					})
+
 				});
 							
 				//initialize geolocation and set center there 
@@ -63,5 +65,5 @@ define(['Page', 'leaflet', 'leafletcss'], function(Page, leaflet){
 			return this; 
 		},
 	});  
-	return MapPage; 
+	return MapPage2; 
 }); 

@@ -14,13 +14,17 @@ require.config({
 	    Threex:{
 	    	deps: ["Three", "JSARToolkit"], 
 	    	exports: "Threex"
+	    }, 
+	    leafletEvents:{
+	    	deps: ["leaflet"], 
+	    	exports: "leafletEvents"
 	    }
 	},
 	packages: [
 		{
 			name: 'jquery', 
-			location: '../libs', 
-			main:'jquery'
+			location: 'http://ajax.googleapis.com/ajax/libs/jquery/2.0.3', 
+			main:"jquery.min"
 		}, 
 		{
 			name: 'underscore', 
@@ -71,6 +75,11 @@ require.config({
 			name: 'leafletcss', 
 			location: '../libs', 
 			main: 'leafletcss'
+		}, 
+		{
+			name: 'leafletEvents', 
+			location: '../libs', 
+			main: 'L.Backbone.Events.js'
 		}, 
 		{
 			name: 'JSARToolkit', 

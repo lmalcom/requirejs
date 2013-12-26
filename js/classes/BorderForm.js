@@ -21,28 +21,6 @@ define(['Form'], function(Form){
 			{type:"number", label: 'border-bottom-left-radius', name: "border-bottom-left-radius"}, 
 			{type:"number", label: 'border-bottom-right-radius', name: "border-bottom-right-radius"}, 
 		], 
-		/*template: function(dat){ 
-			var text, form; 
-			text = '', 
-			form = this;  
-
-			//header is default header for the class, or the header suggested by the model or the default 
-			text += '<h3 class="header">' + (this.header || dat.header ||'Header') + '</h3>'; 
-			text += '<form class="inactive">'; 
-			
-			//create labels and inputs for all of the inputs in the array 
-			_.each(this.inputs.concat(dat.inputs || []), function(input){ 
-				if(input.label) text +=		'<label>' + input.label + ': ( <span id="sliderVal'+ (input.name || '') +'"></span> )</label>'; 		
-				text +=		'<input type="range"'; 
-				text +=		'name = "' + (input.name || '') + '" min="0" value="0">'; 
-				text +=		'</input">'; 
-			}); 
-
-			//submit button 
-			text+= '<input type="submit" class="Button" value="' + (this.submitVal || this.model.get('submitVal') || 'Submit') + '"></input>'; 
-			text += '</form>'; 
-			return _.template(text); 
-		}, 	*/	
 		getFormData: function(ev){ 
 			var ret = {}; 
 
@@ -105,7 +83,6 @@ define(['Form'], function(Form){
 				target.css.set(dummy);
 				target.$el.css(dummy); 
 			}
-			console.log(dummy); 
 			
 			//target.css.inline();
 			this.page.moveEditBox(target); 

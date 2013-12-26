@@ -1,0 +1,46 @@
+{
+  "_id": "ObjectId('52a67da65608fba5c900013c')",
+  "name": "edit2",
+  "classes": [
+    "Edit2",
+    "Block",
+    "Panel",
+    "Page",
+    "Form",
+    "Button",
+    "ColorForm",
+    "BorderForm",
+    "PositionForm",
+    "ColorForm",
+    "TransformForm",
+    "BorderForm",
+    "ShadowForm",
+    "MiscCSSForm",
+    "PublishForm",
+    "LiveButton",
+    "CurrentObjectPanel",
+    "BrushesPanel",
+    "ObjectSettingsPanel",
+    "MetaSettingsPanel",
+    "PublishSettingsPanel",
+    "LiveSettingsPanel",
+    "ObjectPreview",
+    "StylePanel",
+    "ContentForm",
+    "ObjectInformationPanel",
+    "ObjectSettingsPanel",
+    "RemoveButton",
+    "TextBlock", 
+    "VideoBlock", 
+    "ImageBlock"
+  ],
+  "page": {
+    "modelProps": {
+      "settings": {},
+      "options": {}
+    },
+    "viewProps": {
+      "className": "Page"
+    }
+  }
+}

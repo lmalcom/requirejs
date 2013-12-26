@@ -4,14 +4,16 @@ define(['Block', 'youtube'], function(Block, youtube){
 	//Page View 
 	VideoBlock = Block.extend({ 
 		className: Block.prototype.className + ' VideoBlock', 
-		defaultCSS: _.extend({}, Block.prototype.defaultCSS, {
-			'& > iframe':{
+		defaultCSS: _.extend({}, Block.prototype.defaultCSS, { 
+			'& > iframe':{ 
 				'width':'100%', 
-				'height':'100%'
-			}
+				'height':'100%' 
+			} 
 		}), 
 		template: _.template('<div frameborder="0" style=";"></div>'), 
-		video 	:'i3Jv9fNPjgk', 
+		options:{ 
+			video 	:'i3Jv9fNPjgk', 
+		}, 
 		//controls for player: 0 for no controls, 1 for controls
 		controls: 1, 
 		allowFullscreen: 1, 
@@ -19,7 +21,8 @@ define(['Block', 'youtube'], function(Block, youtube){
 			var block, div, vid;
 			block = this, 
 			div = this.el.firstChild, 
-			vid = this.model.get('video') || this.video; 
+			vid = this.model.get('video') || this.options.video; 
+			console.log('using vid: ', vid); 
 
 			//create an empty div for the youtube player to occupy. 
 			this.player = new YT.Player(div, { 
@@ -32,10 +35,10 @@ define(['Block', 'youtube'], function(Block, youtube){
 						}, 
 				events: { 
 					'onReady' : function(event){ 
-									event.target.loadVideoById(vid); 
-						}, 
+						event.target.loadVideoById(vid); 
+					}, 
 					'onStateChange' : block.onPlayerStateChange, 
-						}
+				}
 			}); 
 		}, 
 		onReady : function(event){ 

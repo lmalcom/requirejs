@@ -11,21 +11,22 @@ define(['Block'], function(Block){
 			} 
 		}), 
 		initialize: function(options){ 
-			console.log('oh hey from the image block'); 
 			Block.prototype.initialize.call(this, options); 
 			console.log(options); 
 		},
-		template: function(dat){
+		template: function(dat){ 
 			var template, type, txt; 
 			template = '', 
-			src = dat.src || this.src, 
-			alt  = dat.alt || this.alt; 
+			src = dat.src || this.options.src, 
+			alt = dat.alt || this.options.alt; 
 
 			template += '<img src="' + src + '" alt="' + alt + '" />'; 
 			return _.template(template); 
 		}, 
-		src: 'http://openclipart.org/people/kaleah777/Mustache_Happy_Face_3.svg', 
-		alt: 'You should probably fill this in with real text :)', 
+		options:{
+			src: 'http://openclipart.org/people/kaleah777/Mustache_Happy_Face_3.svg', 
+			alt: 'You should probably fill this in with real text :)', 
+		}		
 	});  
 	return ImageBlock; 
 }); 

@@ -1,5 +1,5 @@
 var fs 		= require("fs"); 
-//var db = require("./db.js"); 
+var db = require("./db.js"); 
 var express = require("express"); 
 var app = express(); 
 
@@ -22,7 +22,7 @@ var t = new twitter({
     access_token_secret: 'bqOctAhzULJ4r3bkw1Vvya0qy8alp2Ak6pYfsklDtqc'     // <--- FILL ME IN
 });
 
-/*var createPage = function(pageName, res){ 
+var createPage = function(pageName, res){ 
 	//get page settings based on name 
 	var html; 
 	db.getPage(pageName, function(page){ 
@@ -32,8 +32,8 @@ var t = new twitter({
 		html += '<script type="text/javascript" src="../js/libs/require.js" data-main = "../js/main.js"></script></head><body></body></html>'; 
 		res.send(html); 
 	}); 
-} */
-var createPage = function(pageName, res){ 
+} 
+/*var createPage = function(pageName, res){ 
 	fs.readFile('./edit2.json', function (err, data) {
 	  	if (err) throw err;
 	  	var html; 
@@ -42,7 +42,7 @@ var createPage = function(pageName, res){
 		html += '<script type="text/javascript" src="../js/libs/require.js" data-main = "../js/main.js"></script></head><body></body></html>'; 
 		res.send(html); 
 	});
-}
+}*/
 var createLivepage = function(pageId, res){ 
 	//get page settings based on name 
 	console.log('pages: ', pages); 

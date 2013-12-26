@@ -17,24 +17,25 @@ define(['Form'], function(Form){
 			{type:"number", label: 'rotateX', name: "rotateX"}, 
 			{type:"number", label: 'rotateY',  name: "rotateY"}, 
 			{type:"number", label: 'rotateZ',  name: "rotateZ"}, 
-			{type:"number", label: 'skew', name: "skew"}, 
+			{type:"number", label: 'skewX', name: "skewX"}, 
+			{type:"number", label: 'skewY', name: "skewY"}, 
 			{type:"number", label: 'scale', name: "scale"}, 
 		],
-		setFormData: function(ev, view){
+		setFormData: function(ev, view){ 
 			var form = this; 
 
-			//by default checks CSS values
-			_.each(this.$el.find('input[type!=submit]'), function(input){
-				//get the name
+			//by default checks CSS values 
+			_.each(this.$el.find('input[type!=submit]'), function(input){ 
+				//get the name 
 				var name, val = null, pseudoClass; 
 				if(pseudoclass = form.parent.pseudoClass) pseudoClass = '&:' + pseudoclass;			
-				name = input.name;
+				name = input.name; 
 
-				//find that value in the css object of the view
-				if(pseudoclass = view.css.get(pseudoClass)){
+				//find that value in the css object of the view 
+				if(pseudoclass = view.css.get(pseudoClass)){ 
 					val = pseudoclass[name]; 
 				}else{
-					val = view.css.get(name);
+					val = view[name];
 				}
 
 				//set that value on the input or none (we dont want to accidentally set values on the objects)
@@ -60,7 +61,6 @@ define(['Form'], function(Form){
 				target[name] = formData; 
 				//target.$el.css(dummy); 
 			}
-			console.log(target); 
 			target.$el.css(target.css.transform());
 			//this.page.moveEditBox(target); 
 

@@ -12,6 +12,7 @@ define(['Block'], function(Block){
 			'submit form': 'submit', 
 			'keyup input,textarea' : 'toggleSubmit', 
 			'blur input, textarea': 'toggleSubmit',
+			'blur input[type=color]':'submit', 
 			'click .deletebtn': 'deleteInput', 
 			'click .header' : 'toggleActive', 
 			'setFormData': 'setFormData'
@@ -68,7 +69,10 @@ define(['Block'], function(Block){
 				'position': 'relative' 
 			}, 
 			'input[type=number]':{
-				'cursor':'move'
+				'cursor':'move', 
+				'user-select':'none',
+				'-webkit-user-select':'none',
+				'-moz-user-select':'none',
 			}
 		}), 
 		initialize: function( options ){ 
@@ -77,7 +81,7 @@ define(['Block'], function(Block){
 			this.el.enctype = "multipart/form-data"; 
 			this.listenTo(this.page, 'change:target', this.setFormData); 
 		}, 
-		template: function(dat){
+		template: function(dat){ 
 			var text, form; 
 			text = '', 
 			form = this; 
@@ -95,12 +99,13 @@ define(['Block'], function(Block){
 				if(form.allowToggleState || input.type === 'color') text+= '<div>'; 						
 					text +=		input.type == 'textarea' ? '<textarea ': '<input type="' + (input.type || 'text') + '"'; 
 					text +=		'name = "' + (input.name || '') + '"'; 
-					text +=		'placeholder="' + (input.text || '') + '"'; 
-					if(input.type == 'number') text += 'min="-9999" max="9999" value="' + (input.value || 0) + '"'
+					text +=		'placeholder="' + (input.placeholder || '') + '"'; 
+					if(input.type == 'text' || input.type == 'textarea') text += 'value="' + (input.value || '') + '"'; 
+					if(input.type == 'number') text += 'min="-9999" max="9999" value="' + (input.value || 0) + '"';
 					text +=		input.type == 'file' ? 'style="display:none">' : '>'; 
 					if(input.type == 'textarea') text += '</textarea>'; 
 					if(input.type =='file') text += '<a class="formImg" style="background-image:url(' + "'" + input.src +"'" + ')"></a>'; 
-					if(input.type === 'color') text += '<label> R: </label><input type="number" min="0" max="255" ' + 'name = "' + (input.name || '') + '-r"><label> G: </label><input type="number" min="0" max="255" ' + 'name = "' + (input.name || '') + '-g"><label> B: </label><input type="number" min="0" max="255" ' + 'name = "' + (input.name || '') + '-b"><label> Alpha: </label><input type="number" value="0" ' + 'name = "' + (input.name || '') + '-alpha"> ';
+					if(input.type === 'color') text += '<label> R: </label><input type="number" min="0" max="255" ' + 'name = "' + (input.name || '') + '-r"><label> G: </label><input type="number" min="0" max="255" ' + 'name = "' + (input.name || '') + '-g"><label> B: </label><input type="number" min="0" max="255" ' + 'name = "' + (input.name || '') + '-b"><label> Alpha: </label><input type="number" value="0" ' + 'name = "' + (input.name || '') + '-alpha" min="0" max="1" step=".01"> ';
 					if(form.allowToggleState) text += '<a class="deletebtn">X</a>'; 
 				if(form.allowToggleState || input.type === 'color') text+= '</div>'; 
 			}); 
@@ -234,6 +239,8 @@ define(['Block'], function(Block){
 			var initialX = ev.pageX; 
 			var target = ev.target; 
 			var viewTarget = this.page.target; 
+			var step = (step = ev.target.step)? step: 1; 
+			console.log('step', step); 
 			viewTarget.$el.css({
 				'-webkit-transition': 'none', 
 				'-moz-transition': 'none', 
@@ -242,8 +249,9 @@ define(['Block'], function(Block){
 			function drag(newEv){ 
 				var newX = newEv.pageX; 
 				var diffX = newX - initialX; 
-				var newVal = target.valueAsNumber + diffX; 
+				var newVal = target.valueAsNumber + diffX*step; 
 				initialX = newX; 
+				console.log(diffX); 
 				if(newVal <= target.max && newVal >= target.min) target.valueAsNumber = newVal
 				$(target).trigger('input'); 
 			}
@@ -253,6 +261,82 @@ define(['Block'], function(Block){
 				$(document).off('mousemove', drag); 
 			})
 			return this; 
+		},
+		setColor: function(name, view){ 
+			var form = this; 
+			if(!view) view = this.page.target; 
+
+			//check text-color, background-color, background-image 
+			var val, pseudoClass; 
+			if(pseudoclass = form.parent.pseudoClass) pseudoClass = '&:' + pseudoclass;	
+
+			//find that value in the css object of the view 
+			if(pseudoclass = view.css.get(pseudoClass)){ 
+				val = pseudoclass[name]; 
+			}else{ 
+				val = view.$el.css(name); 
+			} 
+			//rgba 
+			if( val ){ 
+				if(val.slice(0, 4) === 'rgba'){ 
+					val = val.slice(5, val.length - 1); 
+					var vals = val.split(","); 
+					var hex = form.rgbToHex(parseInt(vals[0]), parseInt(vals[1]), parseInt(vals[2])); 
+
+					//colors 
+					form.$el.find('input[name=' + name + ']').val(hex); 
+					form.$el.find('input[name=' + name + '-r]').val(parseInt(vals[0])); 
+					form.$el.find('input[name=' + name + '-g]').val(parseInt(vals[1])); 
+					form.$el.find('input[name=' + name + '-b]').val(parseInt(vals[2])); 
+					form.$el.find('input[name=' + name + '-alpha]').val(parseFloat(vals[3])); 
+
+				//rgb 
+				}else if(val.slice(0, 3) === 'rgb'){ 
+					val = val.slice(4, val.length - 1); 
+					var vals = val.split(","); 
+					var hex = form.rgbToHex(parseInt(vals[0]), parseInt(vals[1]), parseInt(vals[2])); 
+
+					//colors 
+					form.$el.find('input[name=' + name + ']').val(hex); 
+					form.$el.find('input[name=' + name + '-r]').val(parseInt(vals[0])); 
+					form.$el.find('input[name=' + name + '-g]').val(parseInt(vals[1])); 
+					form.$el.find('input[name=' + name + '-b]').val(parseInt(vals[2])); 
+					form.$el.find('input[name=' + name + '-alpha]').val(1); 
+
+				//hex
+				}else if(val[0] === '#'){
+					console.log('hex!', val); 
+					var color = form.hexToRgb(val); 
+					form.$el.find('input[name=' + name + '-r]').val(color.r);
+					form.$el.find('input[name=' + name + '-g]').val(color.g);
+					form.$el.find('input[name=' + name + '-b]').val(color.b);
+					form.$el.find('input[name=' + name + '-alpha]').val(1); 
+				}
+			}else{				
+				form.$el.find('input[name=' + name + '-r]').val(0); 
+				form.$el.find('input[name=' + name + '-g]').val(0); 
+				form.$el.find('input[name=' + name + '-b]').val(0); 
+				form.$el.find('input[name=' + name + '-alpha]').val(1); 
+			}
+			
+			return this; 
+		},
+		hexToRgb: function(hex) {
+		    // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
+		    var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+		    hex = hex.replace(shorthandRegex, function(m, r, g, b) {
+		        return r + r + g + g + b + b;
+		    });
+
+		    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+		    return result ? {
+		        r: parseInt(result[1], 16),
+		        g: parseInt(result[2], 16),
+		        b: parseInt(result[3], 16)
+		    } : null;
+		},
+		rgbToHex: function(r, g, b) {
+		    return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
 		},
 		send: function(dat){
 			var target = this.page.target, 

@@ -1,13 +1,14 @@
-define(['Page','leaflet', 'leafletcss'], function(Page, leaflet){ 
+define(['Page','io', 'leaflet', 'leafletcss'], function(Page, io, leaflet){ 
 	var MapPage2 = {}; 
 
 	//Page View 
 	MapPage2 = Page.extend({ 
-		className: Page.prototype.className + ' MapPage2',
+		socket: io.connect('http://' + window.location.hostname + ':8800'),
+		className: Page.prototype.className + ' MapPage2', 
 		defaultCSS: _.extend({}, Page.prototype.defaultCSS, {
-			'.container':{
+			'.container':{ 
 				'width':'100%', 
-				'height':'100%'
+				'height':'100%' 
 			}
 		}),
 		events: { 
@@ -17,7 +18,7 @@ define(['Page','leaflet', 'leafletcss'], function(Page, leaflet){
 			return _.template('<div class="container"></div>');
 		},
 		addMarker: function(ev){ 
-			console.dir(ev); 
+			console.log('ev from addMarker: ', ev); 
 			return this; 
 		}, 
 		render: function(){
@@ -46,12 +47,11 @@ define(['Page','leaflet', 'leafletcss'], function(Page, leaflet){
 					// you can set .my-div-icon styles in CSS
 
 					leaflet.marker(page.center).addTo(map);
-					//leaflet.marker([50.505, -0.09], {icon: myIcon}).addTo(map); 
-
-					map.on('click', function(ev){
-						_.each(ev, function(val, key, list){
-							$('body').append(key + ': ' + val + ';\n\n'); 
-						})
+					map.on('mousedown', function(ev){
+						var latlng = ev.latlng; 
+						console.log('ev from map.onclick: ', ev); 
+						leaflet.marker([latlng.lat, latlng.lng]).addTo(map); 
+						page.socket.emit('draw', {'location': ev.latlng}); 
 					})
 
 				});

@@ -41,7 +41,7 @@ define(['Page', 'io'], function(Page, io){
 						'color':'white' 
 					}, 
 				} 
-			} 
+			}
 		}, 
 		initialize: function(options){
 			var page, socket; 

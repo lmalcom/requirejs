@@ -3,7 +3,7 @@ define(['Page', 'io', 'Three', 'shimUserMedia', 'shimRequestAnimationFrame'], fu
 
 	//Page View 
 	ARMap = Page.extend({ 
-		defaultCSS: _.extend({}, Page.prototype.defaultCSS, {
+		defaultCSS: _.extend({}, Page.prototype.defaultCSS, { 
 			'video': { 
 				'width':"100%", 
 				'height':"100%", 

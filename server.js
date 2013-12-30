@@ -176,6 +176,9 @@ io.sockets.on('connection', function(socket){
 	socket.on('draw', function(data){
 		socket.broadcast.emit('create', data); 
 	});
+	socket.on('changeCameraPos', function(data){
+		socket.broadcast.emit('changeCameraPos', data); 
+	});
 	socket.on('changeRoom', function(data){
 		console.log('data from change room: ', data); 
 		socket.join(data.pageId); 

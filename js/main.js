@@ -106,6 +106,16 @@ require.config({
 			location: '../libs', 
 			main: 'shimUserMedia'
 		}, 
+		{
+			name: 'processing', 
+			location: '../libs', 
+			main: 'processing-1.4.1-api.min'
+		}, 
+		{
+			name: 'leapmotion', 
+			location: 'http://js.leapmotion.com/0.3.0-beta2', 
+			main: 'leap'
+		},
 	]
 }); 
 require(['Controller', 'DefaultRouter'], function(Controller, Router){

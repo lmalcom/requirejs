@@ -179,6 +179,9 @@ io.sockets.on('connection', function(socket){
 	socket.on('changeCameraPos', function(data){
 		socket.broadcast.emit('changeCameraPos', data); 
 	});
+	socket.on('updateHand', function(data){
+		socket.broadcast.emit('updateHand', data); 
+	});
 	socket.on('changeRoom', function(data){
 		console.log('data from change room: ', data); 
 		socket.join(data.pageId); 

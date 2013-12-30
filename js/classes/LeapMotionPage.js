@@ -48,7 +48,7 @@ define(['Page', 'io', 'leapmotion','Three', 'shimUserMedia', 'shimRequestAnimati
 				position:{
 					x: (hand.palmPosition[0] * 3),
 		        	y: -((hand.palmPosition[1] * 3) - 400),
-		        	z: -((hand.palmPosition[2] * 3) - 200),
+		        	z: ((hand.palmPosition[2] * 3) - 200),
 				}, 
 				rotation: {
 					x: (hand._rotation[2] * 90),

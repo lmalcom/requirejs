@@ -7,7 +7,6 @@ define(['LeapMotionPage'], function(LMP){
 			LMP.prototype.initialize.call(this, options); 
 			this.ids = {}; 
 			this.socket.on('updateHand', function(dat){
-				alert('updated!'); 
 				page.createHand(dat); 
 			}); 
 		},

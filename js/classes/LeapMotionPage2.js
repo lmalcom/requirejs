@@ -122,16 +122,19 @@ define(['LeapMotionPage'], function(LMP){
 					var pointables = []; 
 					_.each(frame.hands, function(hand){
 						hands.push({
+							id: hand.id, 
 							palmPosition: hand.palmPosition, 
 							_rotation: hand._rotation
 						}); 
 					})
 					_.each(frame.pointables, function(pointable){
 						pointables.push({
+							id: pointable.id, 
 							tipPosition: pointable.tipPosition, 
 							direction: pointable.direction
 						}); 
 					})
+					console.log('frame: ', frame, 'copy: ', {hands: hands, pointables: pointables})
 					page.socket.emit('updateHand', {hands: hands, pointables: pointables}); 
 				}
 

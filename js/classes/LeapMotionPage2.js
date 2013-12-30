@@ -45,7 +45,6 @@ define(['LeapMotionPage'], function(LMP){
 
 			//create hand blocks
 			_.each(frame.hands, function(hand){
-				console.log(hand); 
 				var handPos = page.getHandPos(hand); 
 				page.updateBlock(handPos);
 			}); 
@@ -87,7 +86,7 @@ define(['LeapMotionPage'], function(LMP){
 			this.renderer = new THREE.CanvasRenderer(); 
 			this.renderer.setSize( window.innerWidth, window.innerHeight );
 			this.renderer.domElement.id = 'ARPageRenderer'; 
-			this.renderer.autoClear = false; 
+			//this.renderer.autoClear = false; 
 
 			// setup lights
 			this.scene.add(new THREE.AmbientLight(0xffffff));
@@ -138,7 +137,7 @@ define(['LeapMotionPage'], function(LMP){
 
 				// trigger the rendering 
 				if(page.renderer){ 
-					page.renderer.clear(); 
+					//page.renderer.clear(); 
 					page.renderer.render(page.scene, page.camera); 
 				} 
 				setTimeout(function(){

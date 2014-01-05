@@ -116,6 +116,16 @@ require.config({
 			location: 'http://js.leapmotion.com/0.3.0-beta2', 
 			main: 'leap'
 		},
+		{
+			name: 'dancer', 
+			location: '../libs', 
+			main: 'dancer.min'
+		}, 
+		{
+			name: 'tween', 
+			location: '../libs', 
+			main: 'tween.min'
+		}, 
 	]
 }); 
 require(['Controller', 'DefaultRouter'], function(Controller, Router){

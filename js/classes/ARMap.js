@@ -88,6 +88,7 @@ define(['Page', 'io', 'Three', 'shimUserMedia', 'shimRequestAnimationFrame'], fu
 					mesh.position.z = position.z; 
 					mesh.position.x = position.x; 
 					mesh.position.y = position.y; 
+					console.log('dat: ', dat); 
 
 					//add to scene 
 					page.scene.add(mesh); 

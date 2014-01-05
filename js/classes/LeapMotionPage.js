@@ -18,11 +18,10 @@ define(['Page', 'io', 'leapmotion','Three', 'shimUserMedia', 'shimRequestAnimati
 			var page = this; 
 			Page.prototype.initialize.call(this, options); 
 			//initialize geolocation and set center there 
-			var leap = this.leap = new Leap.Controller(); 
+			var leap = this.leap = new Leap.Controller({enableGestures: true}); 
 			leap.connect(); 
 
 			this.socket.on('changeCameraPos', function(pos){
-				console.log('oh hey', pos); 
 				if(page.camera) page.camera.position.set(pos.position.x*10, pos.position.y*10, pos.position.z*10); 
 			}); 
 		},
@@ -161,7 +160,7 @@ define(['Page', 'io', 'leapmotion','Three', 'shimUserMedia', 'shimRequestAnimati
 				mesh.position.z = Math.random()*-1000; 
 				mesh.position.x = Math.random()*1000; 
 				mesh.position.y = Math.random()*500; 
-				mesh.rotation.set(Math.random()*360, Math.random()*360, Math.random()*360)
+				mesh.rotation.set(Math.random()*360, Math.random()*360, Math.random()*360); 
 				object3d.add(mesh); 
 			}); 
 			
@@ -196,8 +195,7 @@ define(['Page', 'io', 'leapmotion','Three', 'shimUserMedia', 'shimRequestAnimati
 						page.animate(); 
 					}); 
 				}, page.options.rate); 				
-			}
-			
+			}			
 		}, 
 	});  
 	return LeapMotionPage; 

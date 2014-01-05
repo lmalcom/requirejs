@@ -26,7 +26,8 @@ define(['LeapMotionPage','dancer', 'tween'], function(LMP){
 			page.leap.on('frame', function(frame){
 				var ret = {
 					hands: [], 
-					pointables: []
+					pointables: [], 
+					gestures: []
 				}; 
 				_.each(frame.hands, function(hand){
 					ret.hands.push({
@@ -41,6 +42,11 @@ define(['LeapMotionPage','dancer', 'tween'], function(LMP){
 						tipPosition: pointable.tipPosition, 
 						direction: pointable.direction
 					}); 
+				})
+				_.each(frame.gestures, function(gesture){
+					ret.gestures.push({
+						type: gesture.type
+					})
 				})
 				page.socket.emit('updateHand', ret); 
 			})
@@ -129,6 +135,10 @@ define(['LeapMotionPage','dancer', 'tween'], function(LMP){
 			if(frame.pointables.length == 2){ 
 				page.moveLegs(page.getPointablePosition(frame.pointables[0]), page.getPointablePosition(frame.pointables[1])); 
 			}	
+
+			if(frame.gestures.length > 0){ 
+				page.setGestures(frame); 
+			}
 
 			return this; 
 		},
@@ -392,9 +402,6 @@ define(['LeapMotionPage','dancer', 'tween'], function(LMP){
 					page.moveCharacter(frame); 
 					page.emitHands(frame); 
 				} 
-				if(frame.gestures.length > 0){ 
-					page.setGestures(frame); 
-				}
 
 				// trigger the rendering 
 				if(page.renderer){ 

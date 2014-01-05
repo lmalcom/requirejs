@@ -12,6 +12,7 @@ define(['LeapMotionPage','dancer', 'tween'], function(LMP){
 			this.ids = {}; 
 			this.socket.on('updateHand', function(dat){ 
 				page.moveCharacter(dat); 
+				console.log('updated!'); 
 			}); 
 			// Fix up prefixing 
 			window.AudioContext = window.AudioContext || window.webkitAudioContext; 
@@ -20,23 +21,30 @@ define(['LeapMotionPage','dancer', 'tween'], function(LMP){
 			this.startTime = 0, 
 			this.startOffset = 0; 
 			this.loadSound('../../sounds/100_BrazilianVinyl.ogg'); 
-			
 
-			$(document).on('click', function(ev){ 
-				
-
-
-				/*var difAngle = {angle: 0}; 
-				var tween3 = page.tween3 = new TWEEN.Tween(difAngle).to({angle: Math.PI*4}, 2000); 
-				tween3.onUpdate(function(){ 
-					_.each(page.scene3.children, function(child, index){ 
-						var angle = index*Math.PI/10 + difAngle.angle;
-						child.position.set(100*Math.cos(angle), 0, -150 + 100*Math.sin(angle)); 
+			//socketio stuff 
+			page.leap.on('frame', function(frame){
+				var ret = {
+					hands: [], 
+					pointables: []
+				}; 
+				_.each(frame.hands, function(hand){
+					ret.hands.push({
+						id: hand.id, 
+						palmPosition: hand.palmPosition, 
+						_rotation: hand._rotation
 					}); 
-				}); */ 
-				tween.start(); 
-				// tween3.start(); 
-			}); 
+				})
+				_.each(frame.pointables, function(pointable){
+					ret.pointables.push({
+						id: pointable.id, 
+						tipPosition: pointable.tipPosition, 
+						direction: pointable.direction
+					}); 
+				})
+				page.socket.emit('updateHand', ret); 
+			})
+			
 		},
 		diffAngle: 0, 
 		currentFrame: 0, 
@@ -92,50 +100,54 @@ define(['LeapMotionPage','dancer', 'tween'], function(LMP){
 					x: (hand._rotation[2] * 90),
 		        	y: (hand._rotation[1] * 90),
 		        	z: (hand._rotation[0] * 90),
-				}
-			}
-		},
-		getPointablePosition: function(pointable){
-			return {
-				id: pointable.id, 
-				position:{
-					x: (pointable.tipPosition[0] * 3),
-		        	y: (pointable.tipPosition[1] * 3),
-		        	z: (pointable.tipPosition[2] * 3) - 500,
+				} 
+			} 
+		}, 
+		getPointablePosition: function(pointable){ 
+			return { 
+				id: pointable.id,  
+				position:{ 
+					x: (pointable.tipPosition[0] * 3), 
+		        	y: (pointable.tipPosition[1] * 3), 
+		        	z: (pointable.tipPosition[2] * 3) - 500, 
 				}, 
-				rotation: {
-					x: -(pointable.direction[2] * 90),
-		        	y: -(pointable.direction[1] * 90),
-		        	z: (pointable.direction[0] * 90),
-				}
-			}
-		},
-		moveCharacter: function(frame){
+				rotation: { 
+					x: -(pointable.direction[2] * 90), 
+		        	y: -(pointable.direction[1] * 90), 
+		        	z: (pointable.direction[0] * 90), 
+				} 
+			} 
+		}, 
+		moveCharacter: function(frame){ 
 			var page = this; 
 
-			//create hand blocks
-			if(frame.hands.length > 0){
-				page.moveCamera(page.getHandPos(frame.hands[0])); 
-				if(hand = frame.hands[1]) page.moveBody(page.getHandPos(hand)); 				
-			}
+			//create hand blocks 
+			if(frame.hands.length > 0){  
+				page.moveBody(page.getHandPos(frame.hands[0])); 				
+			} 
 			
-			if(frame.pointables.length == 2){
+			if(frame.pointables.length == 2){ 
 				page.moveLegs(page.getPointablePosition(frame.pointables[0]), page.getPointablePosition(frame.pointables[1])); 
 			}	
 
 			return this; 
 		},
 		moveBody: function(handPos){ 
-			this.playerModel.rotation.setY(handPos.rotation.y/10); 
-			this.playerModel.position.setY(handPos.position.y/10); 
-			this.playerModel.position.setZ(handPos.position.z/2);
+			if(!this.scene2Animating){ 
+				this.playerModel.position.setY(handPos.position.y/5); 
+				//move the people too			
+				_.each(page.scene3.children, function(child, index){ 
+					var radius = handPos.position.y; 
+					var angle = index*Math.PI/10 + handPos.position.y; 
+					child.position.set(radius*Math.cos(angle), 0, -150 + radius*Math.sin(angle)); 
+				}); 	
+			}else{ 
+				this.playerModel.position.setX(handPos.position.x*2); 
+				this.playerModel.position.setZ(handPos.position.z); 
+			} 				
 			return this; 
-		},
-		moveCamera: function(handPos){
-			this.camera.position.setX(handPos.position.x*5); 
-			this.playerModel.position.setX(handPos.position.x*5); 
-		},
-		moveLegs: function(pos1, pos2){
+		}, 
+		moveLegs: function(pos1, pos2){ 
 			this.leftleg.rotation.setZ(pos1.rotation.z); 
 			this.rightleg.rotation.setZ(pos2.rotation.z); 
 
@@ -143,56 +155,22 @@ define(['LeapMotionPage','dancer', 'tween'], function(LMP){
 		}, 
 		setGestures: function(frame){ 
 			var page = this; 
-			function onCircle(gesture){
-				if(page.scene3.visible && !page.scene3Animating){ 
-					var difAngle = {angle: 0}; 
-					var tween3 = page.tween3 = new TWEEN.Tween(difAngle).to({angle: Math.PI*2/5}, 9000); 
-					tween3.onUpdate(function(){ 
-						_.each(page.scene3.children, function(child, index){ 
-							var angle = index*Math.PI/10 + difAngle.angle;
-							child.position.set(100*Math.cos(angle), 0, -150 + 100*Math.sin(angle)); 
-						}); 
-					}); 
-					tween3.onComplete(function(){ 
-						page.scene3Animating = false; 
-					}) 
-					var currentColor = page.playerModel.children[0].children[0].material.color; 
-					var from = {
-						z: 0, 
-						r: currentColor.r, 
-						g: currentColor.g, 
-						b: currentColor.b
-					};  
-					var tween = page.tween = new TWEEN.Tween(from).to({
-						z: Math.PI*2, 
-						r: Math.random(), 
-						g: Math.random(), 
-						b: Math.random()
-					}, 9000); 
-					tween.onUpdate(function(){ 
+			function onCircle(gesture){ 
+				var from = {
+					z: 0
+				};  
+				var tween = new TWEEN.Tween(from)
+					.to({z: Math.PI*2}, 500)
+					.onUpdate(function(){ 
 						page.playerModel.rotation.setZ(from.z); 					
-						_.each(page.playerModel.children[0].children, function(appendage){
-							if(material = appendage.material) material.color.setRGB(from.r, from.g, from.b); 
-							
-						})
-					}); 
-					page.playSound(); 
+					})
+					.onComplete(function(){
 
-					/*var posZ = {z: -500}; 
-					var tween2 = page.tween2 = new TWEEN.Tween(posZ).to({z: -600}, 500); 
-					tween2.onUpdate(function(){ 
-						_.each(page.scene2.children, function(child){ 
-							child.position.setZ(posZ.z + Math.random()*50); 
-						}); 
-					}); */
-
-					//tween2.start(); 
-					tween.start(); 
-					tween3.start(); 
-					page.scene3Animating = true; 					
-				} 
+					})
+					.start()
+				if(!page.animating) page.start();  					
 			}
-			function onSwipe(gesture){
+			function onSwipe(gesture){ 
 				if(gesture.type !== 'swipe') return; 
 				if(page.fading) return; 
 
@@ -231,13 +209,8 @@ define(['LeapMotionPage','dancer', 'tween'], function(LMP){
 						onCircle(gesture); 
 					/*case 'swipe': 
 						onSwipe(gesture); */
-				}
-			});
-			/*if(this.playerModel.visible){ 
-
-			}else if(this.scene2.visible){ 
-
-			}else */
+				} 
+			}); 
 		}, 
 		createPerson: function(scene, x, y, z){			
 			var charMaterial = new THREE.MeshLambertMaterial({color: 0xd12b2b});			
@@ -321,7 +294,7 @@ define(['LeapMotionPage','dancer', 'tween'], function(LMP){
 			//THREE vars 
 			this.scene = new THREE.Scene(); 
 			this.camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 10000 ); 
-			this.camera.position.set(0, 25, 0); 
+			this.camera.position.set(-750, 25, 0); 
 			this.scene.add(this.camera); 
 			this.renderer = (!window.WebGLRenderingContext || !document.createElement('canvas').getContext('webgl'))? 
 				 new THREE.CanvasRenderer(): 
@@ -343,41 +316,44 @@ define(['LeapMotionPage','dancer', 'tween'], function(LMP){
 			this.scene.add(light);	
 
 			//add to scene 
-			//this.createPerson(this.scene); 
 			var person = this.createPerson(); 
 			this.scene.add(person); 
 			this.playerModel = person; 
 			this.rightleg = person.children[0].children[0]; 
 			this.leftleg = person.children[0].children[1]; 
-			// this.playerModel.visible = false; 
+			person.position.setX(-750); 
+			person.position.setZ(-250);  
 
 			//scene 2 
 			var scene2 = page.scene2 = new THREE.Object3D(); 
-				_.times(20, function(n){ 
+				_.times(50, function(n){ 
 					var angle = Math.PI + 10*n; 
 					var brick = new THREE.CubeGeometry(50,50,50); 
 					var material = new THREE.MeshLambertMaterial; 
 					material.color.setRGB(Math.random(), Math.random(), Math.random()); 
 					var mesh = new THREE.Mesh(brick, material); 
-					mesh.position.set(20*n*Math.cos(angle + 10*n), 20*n*Math.sin(angle + 10*n), -400); 
+					mesh.position.set(20*n*Math.cos(angle + 10*n), 20*n*Math.sin(angle + 10*n), 0); 
 					scene2.add(mesh); 
 				}); 
-			scene2.position.setX(500); 
+			scene2.position.setX(-750); 
+			scene2.position.setY(1000); 
+			scene2.position.setZ(-500); 
 			this.scene.add(scene2); 
 
 			// scene2.visible = false; 
 
-			//scene 3
+			//scene 3 
 			var scene3 = page.scene3 = new THREE.Object3D(); 
-				_.times(30, function(n){ 
+				_.times(20, function(n){ 
 					var person = page.createPerson(); 
-					var angle = n*Math.PI/15;
+					var angle = n*Math.PI*2/10; 
 					var radius = 100; 
 					var cz = -150; 
 					// person.position.set(100*Math.cos(angle), 0, -150 + 100*Math.sin(angle));
 					person.position.setPositionFromMatrix( new THREE.Matrix4().translate({x: radius*Math.cos(angle), y: 0, z: cz + radius*Math.sin(angle)}));
 					scene3.add(person); 
 				});
+			scene3.position.setX(-750); 
 			this.scene.add(scene3); 
 
 			this.$el.append( this.renderer.domElement );
@@ -395,15 +371,15 @@ define(['LeapMotionPage','dancer', 'tween'], function(LMP){
 					_rotation: hand._rotation
 				}); 
 			})
-			_.each(frame.pointables, function(pointable){
-				pointables.push({
+			_.each(frame.pointables, function(pointable){ 
+				pointables.push({ 
 					id: pointable.id, 
 					tipPosition: pointable.tipPosition, 
-					direction: pointable.direction
+					direction: pointable.direction 
 				}); 
-			})
+			}) 
 			page.socket.emit('updateHand', {hands: hands, pointables: pointables}); 
-		},
+		}, 
 		animate: function(){ 
 			var page = this; 
 
@@ -415,8 +391,8 @@ define(['LeapMotionPage','dancer', 'tween'], function(LMP){
 					//page.createHand(frame); 
 					page.moveCharacter(frame); 
 					page.emitHands(frame); 
-				}
-				if(frame.gestures.length > 0){
+				} 
+				if(frame.gestures.length > 0){ 
 					page.setGestures(frame); 
 				}
 
@@ -441,6 +417,89 @@ define(['LeapMotionPage','dancer', 'tween'], function(LMP){
 				}, page.options.rate); 				
 			}			
 		}, 
+		start: function(){ 
+			var page = this; 
+			page.animating = true; 
+			page.playerModel.position.set(-750, 0 , -250); 
+
+			//move camera 3 times 
+			setTimeout(function(){
+				page.camera.position.set(Math.random()*-500, Math.random()*500, Math.random()*1000); 
+				page.camera.lookAt(new THREE.Vector3(page.playerModel.position.x, page.playerModel.position.y, page.playerModel.position.z)); 
+			}, 1000); 
+
+			setTimeout(function(){
+				page.camera.position.set(Math.random()*500, Math.random()*-1000, Math.random()*1000); 
+				page.camera.lookAt(new THREE.Vector3(page.playerModel.position.x, page.playerModel.position.y, page.playerModel.position.z)); 
+			}, 3000); 
+
+			setTimeout(function(){
+				page.camera.position.set(Math.random()*-1500, Math.random()*500, Math.random()*1000); 
+				/*page.playerModel.position.setX(Math.random()*-500); 
+				page.playerModel.position.setY(Math.random()*500); */
+				page.camera.lookAt(new THREE.Vector3(page.playerModel.position.x, page.playerModel.position.y, page.playerModel.position.z)); 
+				//page.camera.target.position.copy( page.playerModel.position ); 
+			}, 4000); 
+
+			//camera tween 
+			var start = Date.now()/1000; 
+			var from = { 
+				camera: 0, 
+			}; 
+			var to = { 
+				camera: 1000, 
+			}; 
+			var tween = page.tween3 = new TWEEN.Tween(from).to(to, 20000)
+				.onStart(function(){
+					page.scene2Animating = true; 
+				})
+				.onUpdate(function(){ 
+					//move camera from -200 to 1000 
+					page.playerModel.position.setY(from.camera + 50); 
+					page.camera.position.set(-750, from.camera, 0); 
+					page.camera.lookAt(new THREE.Vector3(page.scene2.position.x, page.playerModel.position.y, page.scene2.position.z)); 
+					
+					//move 
+					//var currentTime = Date.now()/1000 - start; 
+				}) 
+				.onComplete(function(){ 
+					page.playerModel.position.setY(from.camera + 50); 
+					page.animating = false; 
+					page.scene2Animating = false; 
+				}) 
+				.delay(4000)
+				.start(); 
+
+			//space tween 
+			var currentColor = page.playerModel.children[0].children[0].material.color; 
+			var from2 = {
+				z: 0, 
+				r: currentColor.r, 
+				g: currentColor.g, 
+				b: currentColor.b
+			};  
+			var tween2 = page.tween = new TWEEN.Tween(from2).to({
+					z: Math.PI*2, 
+					r: Math.random(), 
+					g: Math.random(), 
+					b: Math.random()
+				}, 1000)
+				.onStart(function(){
+					
+				})
+				.onUpdate(function(){ 
+					page.playerModel.rotation.setZ(from2.z); 					
+					_.each(page.playerModel.children[0].children, function(appendage){
+						if(material = appendage.material) material.color.setRGB(from2.r, from2.g, from2.b); 
+					}); 
+				})
+				.onComplete(function(){
+					page.playSound();
+				})
+				.delay(10000)
+				.start();  
+			return this; 
+		}
 	});  
 	return LeapMotionPage3; 
 }); 

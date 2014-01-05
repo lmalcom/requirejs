@@ -91,8 +91,7 @@ define(['Panel', 'processing'], function(Panel){
 		   						panel; 
 	   			} 	   			 
 	   			view.render(); 
-	   		} 	
-	   			    
+	   		} 		   			    
 	    }, 
 	    createView: function( model, options, callback, ctx ){ 
 	    	var panel = this; 

@@ -148,7 +148,7 @@ define(['LeapMotionPage','dancer', 'tween'], function(LMP){
 				page.moveLegs(page.getPointablePosition(frame.pointables[0]), page.getPointablePosition(frame.pointables[1])); 
 			}	
 
-			if(frame.gestures.length > 0){ 
+			if(frame.gestures && frame.gestures.length > 0){ 
 				page.setGestures(frame); 
 			}
 
@@ -170,8 +170,8 @@ define(['LeapMotionPage','dancer', 'tween'], function(LMP){
 			return this; 
 		}, 
 		moveLegs: function(pos1, pos2){ 
-			this.leftleg.rotation.setZ(pos1.rotation.z); 
-			this.rightleg.rotation.setZ(pos2.rotation.z); 
+			this.leftleg.rotateZ(pos1.rotation.z); 
+			this.rightleg.rotateZ(pos2.rotation.z); 
 
 			return this; 
 		}, 
@@ -184,7 +184,7 @@ define(['LeapMotionPage','dancer', 'tween'], function(LMP){
 				var tween = new TWEEN.Tween(from)
 					.to({z: Math.PI*2}, 500)
 					.onUpdate(function(){ 
-						page.playerModel.rotation.setZ(from.z); 					
+						page.playerModel.rotateZ(from.z); 					
 					})
 					.onComplete(function(){
 
@@ -316,24 +316,26 @@ define(['LeapMotionPage','dancer', 'tween'], function(LMP){
 			//THREE vars 
 			this.scene = new THREE.Scene(); 
 			this.camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 10000 ); 
-			this.camera.position.set(-750, 25, 0); 
+			this.camera.position.set(0, 25, 0); 
 			this.scene.add(this.camera); 
-			this.renderer = (!window.WebGLRenderingContext || !document.createElement('canvas').getContext('webgl') ||  /chrom(e|ium)/.test(navigator.userAgent.toLowerCase()))? 
+			this.renderer = (!window.WebGLRenderingContext || !document.createElement('canvas').getContext('webgl'))? 
 				 new THREE.CanvasRenderer(): 
-				 new THREE.WebGLRenderer();  
+				 new THREE.WebGLRenderer({ alpha: true });  
 			//this.renderer = new THREE.CanvasRenderer(); 
 			this.renderer.setSize( window.innerWidth, window.innerHeight ); 
 			this.renderer.domElement.id = 'ARPageRenderer'; 
-			this.renderer.setClearColorHex( 0x191919, 0); 
+			this.renderer.setClearColor( 0x191919, 0); 
 
 			// setup lights 
-			this.scene.add(new THREE.AmbientLight(0xffffff)); 
+			this.scene.add(new THREE.AmbientLight(0xffffff).cameraVisible = true); 
 
-			var light	= new THREE.DirectionalLight(0xffffff); 
+			var light	= new THREE.DirectionalLight(0xffffff);
+			light.cameraVisible = true 
 			light.position.set(3, -3, 1).normalize(); 
 			this.scene.add(light); 
 
 			var light	= new THREE.DirectionalLight(0xffffff); 
+			light.cameraVisible = true 
 			light.position.set(-0, 2, -1).normalize(); 
 			this.scene.add(light);	
 
@@ -343,21 +345,26 @@ define(['LeapMotionPage','dancer', 'tween'], function(LMP){
 			this.playerModel = person; 
 			this.rightleg = person.children[0].children[0]; 
 			this.leftleg = person.children[0].children[1]; 
-			person.position.setX(-750); 
+			_.each(person.children[0].children, function(child){
+				console.log(child); 
+				if(child.material) child.material.color.setRGB(Math.random(), Math.random(), Math.random()); 
+			}); 			
+			person.position.setX(0); 
 			person.position.setZ(-250);  
 
 			//scene 2 
 			var scene2 = page.scene2 = new THREE.Object3D(); 
 				_.times(50, function(n){ 
 					var angle = Math.PI + 10*n; 
-					var brick = new THREE.CubeGeometry(50,50,50); 
+					var brick = new THREE.CubeGeometry(Math.random()*150, Math.random()*150, Math.random()*150);
+					//var brick = new THREE.SphereGeometry(Math.random()*150); 
 					var material = new THREE.MeshLambertMaterial; 
 					material.color.setRGB(Math.random(), Math.random(), Math.random()); 
 					var mesh = new THREE.Mesh(brick, material); 
 					mesh.position.set(20*n*Math.cos(angle + 10*n), 20*n*Math.sin(angle + 10*n), 0); 
 					scene2.add(mesh); 
 				}); 
-			scene2.position.setX(-750); 
+			scene2.position.setX(0); 
 			scene2.position.setY(1000); 
 			scene2.position.setZ(-500); 
 			this.scene.add(scene2); 
@@ -372,10 +379,10 @@ define(['LeapMotionPage','dancer', 'tween'], function(LMP){
 					var radius = 100; 
 					var cz = -150; 
 					// person.position.set(100*Math.cos(angle), 0, -150 + 100*Math.sin(angle));
-					person.position.setPositionFromMatrix( new THREE.Matrix4().translate({x: radius*Math.cos(angle), y: 0, z: cz + radius*Math.sin(angle)}));
+					person.position.set(radius*Math.cos(angle), 0, cz + radius*Math.sin(angle));
 					scene3.add(person); 
 				});
-			scene3.position.setX(-750); 
+			scene3.position.setX(0); 
 			this.scene.add(scene3); 
 
 			this.$el.append( this.renderer.domElement );
@@ -429,7 +436,7 @@ define(['LeapMotionPage','dancer', 'tween'], function(LMP){
 				}
 				TWEEN.update(); 
 				page.analyseSound(); 
-				setTimeout(function(){
+				setTimeout(function(){ 
 					window.requestAnimationFrame(function(){ 
 						page.animate(); 
 					}); 
@@ -439,7 +446,7 @@ define(['LeapMotionPage','dancer', 'tween'], function(LMP){
 		start: function(){ 
 			var page = this; 
 			page.animating = true; 
-			page.playerModel.position.set(-750, 0 , -250); 
+			page.playerModel.position.set(0, 0 , -250); 
 
 			//move camera 3 times 
 			setTimeout(function(){
@@ -463,21 +470,26 @@ define(['LeapMotionPage','dancer', 'tween'], function(LMP){
 			//camera tween 
 			var start = Date.now()/1000; 
 			var from = { 
+				angle: 0, 
 				camera: 0, 
 			}; 
 			var to = { 
-				camera: 1000, 
+				angle: 4*Math.PI, 
+				camera: 1700, 
 			}; 
 			var tween = page.tween3 = new TWEEN.Tween(from).to(to, 20000)
-				.onStart(function(){
+				.onStart(function(){ 
 					page.scene2Animating = true; 
 				})
 				.onUpdate(function(){ 
 					//move camera from -200 to 1000 
+					var radius = 900; 
 					page.playerModel.position.setY(from.camera + 50); 
-					page.camera.position.set(-750, from.camera, 0); 
+					//page.camera.position.set(-750, from.camera, 0); 
+					page.camera.position.set(-250 + radius*Math.cos(from.angle), from.camera, -250 + radius*Math.sin(from.angle));
 					page.camera.lookAt(new THREE.Vector3(page.scene2.position.x, page.playerModel.position.y, page.scene2.position.z)); 
-					
+
+
 					//move 
 					//var currentTime = Date.now()/1000 - start; 
 				}) 
@@ -507,7 +519,7 @@ define(['LeapMotionPage','dancer', 'tween'], function(LMP){
 					
 				})
 				.onUpdate(function(){ 
-					page.playerModel.rotation.setZ(from2.z); 					
+					page.playerModel.rotateZ(from2.z); 					
 					_.each(page.playerModel.children[0].children, function(appendage){
 						if(material = appendage.material) material.color.setRGB(from2.r, from2.g, from2.b); 
 					}); 

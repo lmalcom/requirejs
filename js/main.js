@@ -89,7 +89,7 @@ require.config({
 		{
 			name: 'Three', 
 			location: '../libs', 
-			main: 'Three'
+			main: 'three.min'
 		}, 
 		{
 			name: 'Threex', 

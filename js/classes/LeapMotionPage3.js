@@ -2,6 +2,9 @@ define(['LeapMotionPage','dancer', 'tween'], function(LMP){
 	var LeapMotionPage3 = {}; 
 	//Page View 
 	LeapMotionPage3 = LMP.extend({ 
+		events: _.extend({}, LMP.prototype.events, {
+			'keydown': 'changePage'
+		}), 
 		defaultCSS: _.extend({}, LMP.defaultCSS, { 
 			'background':'url("images/black_lozenge.png")' 
 		}), 
@@ -12,8 +15,10 @@ define(['LeapMotionPage','dancer', 'tween'], function(LMP){
 			this.ids = {}; 
 			this.socket.on('updateHand', function(dat){ 
 				page.moveCharacter(dat); 
-				console.log('updated!'); 
 			}); 
+			this.socket.on('changePage', function(dat){
+				page.changePage(); 
+			})
 			// Fix up prefixing 
 			window.AudioContext = window.AudioContext || window.webkitAudioContext; 
 			this.context = new AudioContext(); 
@@ -47,14 +52,19 @@ define(['LeapMotionPage','dancer', 'tween'], function(LMP){
 					ret.gestures.push({
 						type: gesture.type
 					})
-				})
+				}); 
 				page.socket.emit('updateHand', ret); 
 			})
-			
+			$(document).on('keypress', function(ev){
+				if(ev.keyCode === 51) page.changePage(); 
+			})
 		},
 		diffAngle: 0, 
 		currentFrame: 0, 
 		currentFrameNumber: 0, 
+		changePage: function(ev){
+			window.location.href = 'http://dataroper.com/fractaleap'; 
+		},
 		loadSound: function(url) {
 			var page = this; 
 		  	var request = new XMLHttpRequest();

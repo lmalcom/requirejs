@@ -213,4 +213,7 @@ io.sockets.on('connection', function(socket){
 			socket.broadcast.to(pageId).emit('create', data);
 		}); 		
 	}); 
+	socket.on('changePage', function(dat){
+		socket.broadcast.emit('changePage', dat); 
+	})
 });

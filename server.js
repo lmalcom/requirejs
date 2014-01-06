@@ -172,7 +172,13 @@ io.sockets.on('connection', function(socket){
 	if(pageId = socket.handshake.query.pageId){ 
 		socket.join(pageId); 
 		socket.set('pageId', data.pageId); 
-	} 
+	}
+	socket.on('leapProcessing',function(data){
+		socket.broadcast.emit('leapProcessing', data);
+	});
+	socket.on('sampleTrigger',function(data){
+		socket.broadcast.emit('sampleTrigger', data);
+	});
 	socket.on('draw', function(data){
 		socket.broadcast.emit('create', data); 
 	});

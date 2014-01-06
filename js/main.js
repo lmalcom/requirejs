@@ -126,6 +126,11 @@ require.config({
 			location: '../libs', 
 			main: 'tween.min'
 		}, 
+		{
+			name: 'soundmanager',
+			location: '../libs',
+			main: 'soundmanager2-nodebug-jsmin'
+		},
 	]
 }); 
 require(['Controller', 'DefaultRouter'], function(Controller, Router){

@@ -123,6 +123,7 @@ define(['Page', 'io', 'leapmotion','Three', 'shimUserMedia', 'shimRequestAnimati
 				})	*/					
 			}
 			page.renderCSS();
+			return this; 
 		}, 
 		createScene: function(){ 
 

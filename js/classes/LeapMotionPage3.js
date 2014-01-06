@@ -56,7 +56,7 @@ define(['LeapMotionPage','dancer', 'tween'], function(LMP){
 				page.socket.emit('updateHand', ret); 
 			})
 			$(document).on('keypress', function(ev){
-				if(ev.keyCode === 51) page.changePage(); 
+				if(ev.keyCode === 51 || ev.which === 51) page.changePage(); 
 			})
 		},
 		diffAngle: 0, 
@@ -64,6 +64,7 @@ define(['LeapMotionPage','dancer', 'tween'], function(LMP){
 		currentFrameNumber: 0, 
 		changePage: function(ev){
 			window.location.href = 'http://dataroper.com/fractaleap'; 
+			return this; 
 		},
 		loadSound: function(url) {
 			var page = this; 
@@ -316,7 +317,7 @@ define(['LeapMotionPage','dancer', 'tween'], function(LMP){
 			this.camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 10000 ); 
 			this.camera.position.set(-750, 25, 0); 
 			this.scene.add(this.camera); 
-			this.renderer = (!window.WebGLRenderingContext || !document.createElement('canvas').getContext('webgl'))? 
+			this.renderer = (!window.WebGLRenderingContext || !document.createElement('canvas').getContext('webgl') ||  /chrom(e|ium)/.test(navigator.userAgent.toLowerCase()))? 
 				 new THREE.CanvasRenderer(): 
 				 new THREE.WebGLRenderer();  
 			//this.renderer = new THREE.CanvasRenderer(); 

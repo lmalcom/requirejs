@@ -21,7 +21,7 @@ define(['Block', 'youtube'], function(Block, youtube){
 			var block, div, vid;
 			block = this, 
 			div = this.el.firstChild, 
-			vid = this.model.get('video') || this.options.video; 
+			vid = this.model.get('video') || this.video; 
 			console.log('using vid: ', vid); 
 
 			//create an empty div for the youtube player to occupy. 

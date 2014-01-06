@@ -123,7 +123,20 @@ define(['Page', 'io', 'leapmotion', 'soundmanager', 'processing'], function(Page
 			this.socket.on('connect', function(){
                 console.log('THE SOCKSERTSKERJLSKJFLSJ');
 			}); 
+            $(document).on('keypress', function(ev){                
+                if(ev.keyCode === 51 || ev.which === 51){
+                    page.socket.emit('changePage2', {}); 
+                    page.changePage(); 
+                }
+            })
+            this.socket.on('changePage2', function(dat){
+                page.changePage(); 
+            })
 		},
+        changePage: function(ev){
+            window.location.href = 'http://dataroper.com/demo2'; 
+            return this; 
+        },
 		checkForProcessing: function(){
 			var page = this;
 			function processingLoaded(){			

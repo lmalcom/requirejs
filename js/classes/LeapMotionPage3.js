@@ -56,6 +56,7 @@ define(['LeapMotionPage','dancer', 'tween'], function(LMP){
 				page.socket.emit('updateHand', ret); 
 			})
 			$(document).on('keypress', function(ev){
+				page.socket.emit('changePage', {}); 
 				if(ev.keyCode === 51 || ev.which === 51) page.changePage(); 
 			})
 		},

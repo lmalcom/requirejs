@@ -2,6 +2,7 @@ define(['Page'], function(Page){
 	var DemoPage = {}; 
 	//Page View 
 	DemoPage = Page.extend({ 
+		className: Page.prototype.className + ' DemoPage', 
 		defaultCSS: _.extend({}, Page.prototype.defaultCSS, {
 			'.FractaLeapMotionPage':{
 				'display':'none'

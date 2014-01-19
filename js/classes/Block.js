@@ -55,10 +55,10 @@ define(['CSS'], function(CSS){
 
 				//parent page 
 				this.page = (function findPage(child){
-					return 	(child.parent && child.parent.parent)? findPage(child.parent): 
-							(child.parent)? child.parent: 
-							child; 
-				})(this); 
+								return 	(child.parent && child.parent.parent)? findPage(child.parent): 
+										(child.parent)? child.parent: 
+										child; 
+							})(this); 
 
 				//add css 
 				attrs = (!attributes.immutableCSS && attributes.css)? attributes.css: {}; 

@@ -52,23 +52,6 @@ define(['jquery', 'underscore', 'backbone', 'less','Block', 'Panel','Page', 'Def
 			model = new klass(child.settings || {}, child.options || {}); 
 			return model; 
 		}, 
-		/*createModelCollection: function( collection ){ 
-			//create collection from children 
-			var arr, coll, controller; 
-			controller = this; 
-			arr = []; 
-
-			//create all of the models 
-			_.each(collection, function (child){ 
-				//make new model and set settings 
-				arr.push(controller.createModel(child)); 
-			}); 
-			
-			//create Collection 
-			coll = new Backbone.Collection(arr); 
-
-			return coll; 
-		}, */
 		createView: function(model, props){ 
 			var controller, klass, options, view; 
 			controller = this; 
@@ -88,32 +71,16 @@ define(['jquery', 'underscore', 'backbone', 'less','Block', 'Panel','Page', 'Def
 			view = new klass(options); 
 			return view; 
 		},
-		/*createViewCollection: function( model, subviewprops ){
-			//create collection from children 
-			var arr, controller; 
-			controller = this; 
-			arr = []; 
-
-			//create all of the models
-			_.each(subviewprops, function (child){
-
-				//make new model and set settings 
-				arr.push(controller.createView(child)); 
-
-			}); 
-
-			return arr; 
-		},*/
-		//takes the state JSON and creates a page collection
+		//takes the state JSON and creates a page collection 
 		//this does NOT put it on the page, it only creates the collection 
-		initializeState: function( json ){
+		initializeState: function( json, parent ){ 
 			var controller, model, view, ret; 
 			controller = this, 
 			ret = {}; 
 			//console.log('dat from initialize State', json); 
 			//add model and view 
 			ret.model = controller.createModel(json.modelProps || {}); 
-			ret.view = controller.createView(ret.model, json.viewProps || {}); 
+			ret.view = controller.createView(ret.model, _.extend({}, json.viewProps, {parent: parent})); 
 
 			//load collection 
 			if(json.subcollection){ 
@@ -121,14 +88,14 @@ define(['jquery', 'underscore', 'backbone', 'less','Block', 'Panel','Page', 'Def
 
 				//get models and views from substates 
 				_.each(json.subcollection, function(substate){ 
-					arr.push(controller.initializeState(substate)); 
+					arr.push(controller.initializeState(substate, ret.view)); 
 				}); 
 
 				//then separate them
-				_.each(arr, function(substate){
+				_.each(arr, function(substate){ 
 					modarr.push(substate.model); 
 					viewarr.push(substate.view); 
-				})
+				}) 
 
 				ret.subcollection = arr; 
 				ret.model.subcollection = new Backbone.Collection(modarr); 

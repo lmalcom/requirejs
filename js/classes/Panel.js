@@ -28,7 +28,8 @@ define(['Block'], function(Block){
 	   		//return the view that matches that model 
 	   		_.each(this.subviews, function(subview){ 
 	   			(subview.model === model) ? view = subview : false; 
-	   		}); 
+	   		});
+	   		 
 	   		//create view if it doesn't already exist and append to this
 	   		if(!view){ 
 	   			this.createView( model, null, function( newView ){

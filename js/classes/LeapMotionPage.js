@@ -1,4 +1,4 @@
-define(['Page', 'io', 'leapmotion','Three', 'shimUserMedia', 'shimRequestAnimationFrame', ], function(Page, io, leap){
+define(['Page', 'io', 'leapmotion','Three', 'shimUserMedia', 'shimRequestAnimationFrame'], function(Page, io, leap){
 	var LeapMotionPage = {}; 
 	//Page View 
 	LeapMotionPage = Page.extend({ 

@@ -20,6 +20,14 @@ define(['LeapMotionPage3'], function(LMP){
 				'background-color':'rgba(0,0,0,.8)',
 			}
 		}), 
+		initialize: function(options){
+			LMP.prototype.initialize.call(this, options); 
+			$(document).on('keypress', function(ev){                
+                if(ev.keyCode === 32 || ev.which === 32){
+                    page.startScene(); 
+                }
+            })
+		},
 		className: LMP.prototype.className + ' LeapMotionPage4', 
 		render: function(){ 
 			window.page = this; 
@@ -147,6 +155,22 @@ define(['LeapMotionPage3'], function(LMP){
 
 			return this; 
 		},
+		setGestures: function(){}, 
+		startScene: function(ev){ 
+			var from = {
+				z: 0
+			};  
+			var tween = new TWEEN.Tween(from)
+				.to({z: Math.PI*2}, 500)
+				.onUpdate(function(){ 
+					page.playerModel.rotateZ(from.z); 					
+				})
+				.onComplete(function(){
+
+				})
+				.start()
+			if(!page.animating) page.start();  					
+		}
 	});  
 	return LeapMotionPage4; 
 }); 

@@ -219,4 +219,7 @@ io.sockets.on('connection', function(socket){
 	socket.on('changePage', function(dat){
 		socket.broadcast.emit('changePage', dat); 
 	})
+	socket.on('start', function(dat){
+		socket.broadcast.emit('start', dat); 
+	})
 });

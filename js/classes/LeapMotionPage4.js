@@ -21,12 +21,17 @@ define(['LeapMotionPage3'], function(LMP){
 			}
 		}), 
 		initialize: function(options){
+			var page = this; 
 			LMP.prototype.initialize.call(this, options); 
 			$(document).on('keypress', function(ev){                
                 if(ev.keyCode === 32 || ev.which === 32){
                     page.startScene(); 
+                    page.socket.emit('start'); 
                 }
             }); 
+			page.socket.on('start', function(dat){
+				page.startScene(); 
+			})
 		},
 		className: LMP.prototype.className + ' LeapMotionPage4', 
 		render: function(){ 

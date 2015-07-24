@@ -59,14 +59,15 @@ var createLivepage = function(pageId, res){
 
 
 //basic settings 
-app.configure(function(){ 
-	app.use(express.cookieParser()); 
-	app.use(express.session({secret: 'secret variable that gets hashed, omg!'})); 
-	app.use(express.bodyParser()); 
-	app.use(express.methodOverride()); 
-	app.use(app.router); 
-	app.use(express.static(__dirname));  
-});  
+// app.configure(function(){ 
+// 	app.use(express.cookieParser()); 
+// 	app.use(express.session({secret: 'secret variable that gets hashed, omg!'})); 
+// 	app.use(express.bodyParser()); 
+// 	app.use(express.methodOverride()); 
+// 	app.use(app.router); 
+	 
+// });  
+app.use(express.static(__dirname)); 
 app.get('/', function(req, res){ 
 	createPage('index', res); 
 }); 
@@ -165,6 +166,8 @@ app.get('/streaming/:query', function(req, res){
 	} 
 	res.send('streaming!'); 
 }); 
+
+
 
 
 //SOCKET IO
